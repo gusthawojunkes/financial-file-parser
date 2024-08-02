@@ -5,13 +5,15 @@ import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
 class OFXDataHelper {
-    fun getDate(date: String): LocalDateTime? {
-        val inputWithoutTimeZone = date.replace("\\[.*\\]".toRegex(), "")
-        val formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss")
-        return try {
-            LocalDateTime.parse(inputWithoutTimeZone, formatter)
-        } catch (e: DateTimeParseException) {
-            null
+    companion object {
+        fun getDate(date: String): LocalDateTime? {
+            val inputWithoutTimeZone = date.replace("\\[.*\\]".toRegex(), "")
+            val formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss")
+            return try {
+                LocalDateTime.parse(inputWithoutTimeZone, formatter)
+            } catch (e: DateTimeParseException) {
+                null
+            }
         }
     }
 }

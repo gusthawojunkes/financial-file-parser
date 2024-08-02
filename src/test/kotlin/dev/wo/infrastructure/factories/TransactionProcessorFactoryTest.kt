@@ -11,16 +11,14 @@ class TransactionProcessorFactoryTest {
 
         @Test
         fun `should return NubankTransactionProcessor`() {
-            val factory = TransactionProcessorFactory()
-            val processor = factory.getProcessor(FinancialInstitution.NUBANK)
+            val processor = TransactionProcessorFactory.getProcessor(FinancialInstitution.NUBANK)
             assertTrue(processor is NubankTransactionProcessor)
         }
 
         @Test
         fun `should throw IllegalArgumentException`() {
-            val factory = TransactionProcessorFactory()
             val exception = assertThrows(IllegalArgumentException::class.java) {
-                factory.getProcessor(FinancialInstitution.UNKNOWN)
+                TransactionProcessorFactory.getProcessor(FinancialInstitution.UNKNOWN)
             }
             assertEquals("Invalid financial institution", exception.message)
         }
