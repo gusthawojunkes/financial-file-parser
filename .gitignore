@@ -36,3 +36,5 @@ out/
 .vscode/
 
 src/test/resources/files
+
+src/main/resources/application-dev.yaml
