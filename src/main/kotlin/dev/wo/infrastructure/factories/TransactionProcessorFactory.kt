@@ -6,11 +6,10 @@ import dev.wo.domain.services.TransactionProcessor
 import dev.wo.infrastructure.adapters.processors.NubankTransactionProcessor
 
 class TransactionProcessorFactory {
-
     companion object {
         fun getProcessor(institution: FinancialInstitution): TransactionProcessor {
             return when (institution) {
-                NUBANK -> NubankTransactionProcessor(NUBANK)
+                NUBANK -> NubankTransactionProcessor()
                 else -> throw IllegalArgumentException("Invalid financial institution")
             }
         }
