@@ -1,9 +1,9 @@
 package dev.wo.domain.models.ofx
 
 import dev.wo.domain.enums.TransactionType
-import junit.framework.TestCase.assertEquals
 import java.time.LocalDateTime
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
 class OFXDataHelperTest {
