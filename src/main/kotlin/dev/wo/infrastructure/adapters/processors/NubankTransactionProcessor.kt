@@ -11,8 +11,6 @@ import org.apache.commons.lang3.StringUtils
 import java.io.*
 import javax.xml.bind.JAXBContext
 
-private val INSTITUTION: FinancialInstitution = FinancialInstitution.NUBANK
-
 class NubankTransactionProcessor(
     override var fileType: String? = null,
     override var file: File? = null
@@ -57,7 +55,7 @@ class NubankTransactionProcessor(
                     transactionTime,
                     institutionUUID,
                     transactionType = transactionType,
-                    institution = INSTITUTION,
+                    institution = FinancialInstitution.NUBANK,
                     cardType = cardType
                 )
 
@@ -158,11 +156,11 @@ class NubankTransactionProcessor(
         return file
     }
 
-    fun getStartingFor(property: String): String {
+    private fun getStartingFor(property: String): String {
         return "<$property>"
     }
 
-    fun getEndingFor(property: String): String {
+    private fun getEndingFor(property: String): String {
         return "</$property>"
     }
 
