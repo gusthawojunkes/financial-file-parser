@@ -11,4 +11,16 @@ class SonRs {
 
     @XmlElement(name = "LANGUAGE")
     private val language: String? = null
+
+    fun getStatus(): Status? {
+        return status
+    }
+
+    fun getDtServer(): String? {
+        return dtServer
+    }
+
+    fun getLanguage(): String? {
+        return language
+    }
 }

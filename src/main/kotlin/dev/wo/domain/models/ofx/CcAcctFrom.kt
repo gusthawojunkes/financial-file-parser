@@ -5,4 +5,8 @@ import javax.xml.bind.annotation.XmlElement
 class CcAcctFrom {
     @XmlElement(name = "ACCTID")
     private val acctId: String? = null
+
+    fun getAcctId(): String? {
+        return acctId
+    }
 }

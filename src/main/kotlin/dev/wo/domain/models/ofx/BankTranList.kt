@@ -12,5 +12,17 @@ class BankTranList {
 
     @XmlElementWrapper(name = "STMTTRN")
     @XmlElement(name = "STMTTRN")
-    var stmtTrnList: List<StmtTrn>? = null
+    private var stmtTrnList: List<StmtTrn>? = null
+
+    fun getDtStart(): String? {
+        return dtStart
+    }
+
+    fun getDtEnd(): String? {
+        return dtEnd
+    }
+
+    fun getStmtTrnList(): List<StmtTrn>? {
+        return stmtTrnList
+    }
 }

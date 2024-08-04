@@ -6,35 +6,79 @@ import javax.xml.bind.annotation.XmlRootElement
 @XmlRootElement(name = "OFX")
 class OFXFile {
     @XmlElement(name = "OFXHEADER")
-    private val header: String? = null
+    private var header: String? = null
 
     @XmlElement(name = "DATA")
-    private val data: String? = null
+    private var data: String? = null
 
     @XmlElement(name = "VERSION")
-    private val version: String? = null
+    private var version: String? = null
 
     @XmlElement(name = "SECURITY")
-    private val security: String? = null
+    private var security: String? = null
 
     @XmlElement(name = "ENCODING")
-    private val encoding: String? = null
+    private var encoding: String? = null
 
     @XmlElement(name = "CHARSET")
-    private val charset: String? = null
+    private var charset: String? = null
 
     @XmlElement(name = "COMPRESSION")
-    private val compression: String? = null
+    private var compression: String? = null
 
     @XmlElement(name = "OLDFILEUID")
-    private val oldFileUid: String? = null
+    private var oldFileUid: String? = null
 
     @XmlElement(name = "NEWFILEUID")
-    private val newFileUid: String? = null
+    private var newFileUid: String? = null
 
     @XmlElement(name = "SIGNONMSGSRSV1")
-    private val signonMsgsRsV1: SignonMsgsRsV1? = null
+    private var signonMsgsRsV1: SignonMsgsRsV1? = null
 
     @XmlElement(name = "CREDITCARDMSGSRSV1")
-    var creditCardMsgsRsV1: CreditCardMsgsRsV1? = null
+    private var creditCardMsgsRsV1: CreditCardMsgsRsV1? = null
+
+    fun getHeader(): String? {
+        return header
+    }
+
+    fun getData(): String? {
+        return data
+    }
+
+    fun getVersion(): String? {
+        return version
+    }
+
+    fun getSecurity(): String? {
+        return security
+    }
+
+    fun getEncoding(): String? {
+        return encoding
+    }
+
+    fun getCharset(): String? {
+        return charset
+    }
+
+    fun getCompression(): String? {
+        return compression
+    }
+
+    fun getOldFileUid(): String? {
+        return oldFileUid
+    }
+
+    fun getNewFileUid(): String? {
+        return newFileUid
+    }
+
+    fun getSignonMsgsRsV1(): SignonMsgsRsV1? {
+        return signonMsgsRsV1
+    }
+
+    fun getCreditCardMsgsRsV1(): CreditCardMsgsRsV1? {
+        return creditCardMsgsRsV1
+    }
 }

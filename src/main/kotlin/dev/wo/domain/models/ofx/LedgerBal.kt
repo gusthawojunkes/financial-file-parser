@@ -8,4 +8,12 @@ class LedgerBal {
 
     @XmlElement(name = "DTASOF")
     private val dtAsOf: String? = null
+
+    fun getBalAmt(): String? {
+        return balAmt
+    }
+
+    fun getDtAsOf(): String? {
+        return dtAsOf
+    }
 }

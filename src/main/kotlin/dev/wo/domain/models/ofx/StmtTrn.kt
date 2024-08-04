@@ -4,17 +4,37 @@ import javax.xml.bind.annotation.XmlElement
 
 class StmtTrn {
     @XmlElement(name = "TRNTYPE")
-    var trnType: String? = null
+    private var trnType: String? = null
 
     @XmlElement(name = "DTPOSTED")
-    var dtPosted: String? = null
+    private var dtPosted: String? = null
 
     @XmlElement(name = "TRNAMT")
-    var trnAmt: String? = null
+    private var trnAmt: String? = null
 
     @XmlElement(name = "FITID")
-    var fitId: String? = null
+    private var fitId: String? = null
 
     @XmlElement(name = "MEMO")
-    var memo: String? = null
+    private var memo: String? = null
+
+    fun getTrnType(): String? {
+        return trnType
+    }
+
+    fun getDtPosted(): String? {
+        return dtPosted
+    }
+
+    fun getTrnAmt(): String? {
+        return trnAmt
+    }
+
+    fun getFitId(): String? {
+        return fitId
+    }
+
+    fun getMemo(): String? {
+        return memo
+    }
 }

@@ -8,4 +8,12 @@ class Status {
 
     @XmlElement(name = "SEVERITY")
     private val severity: String? = null
+
+    fun getCode(): String? {
+        return code
+    }
+
+    fun getSeverity(): String? {
+        return severity
+    }
 }
