@@ -1,16 +1,17 @@
 package dev.wo.application.web.routes
 
+import dev.wo.application.web.resource.response.FinancialTransactionResponse
 import dev.wo.domain.enums.FinancialInstitution
-import dev.wo.domain.transactions.FinancialTransaction
 import dev.wo.infrastructure.factories.TransactionProcessorFactory
 import io.ktor.http.*
-import io.ktor.http.content.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import java.io.File
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
+import java.io.File
 
 private val logger = LoggerFactory.getLogger(Route::class.java)
 
@@ -21,35 +22,40 @@ private suspend fun ApplicationCall.getRequiredHeader(headerName: String): Strin
     }
 }
 
+private suspend fun ApplicationCall.getTempFile(): File {
+    val tempFile = withContext(Dispatchers.IO) {
+        File.createTempFile("upload_", ".tmp")
+    }
+    receiveStream().use { inputStream ->
+        tempFile.outputStream().buffered().use { outputStream ->
+            inputStream.copyTo(outputStream)
+        }
+    }
+    return tempFile
+}
+
 fun Route.processFileRoutes() {
     route("api/v1") {
         route("file") {
             post("process") {
-                val file = call.receiveMultipart()
                 var tempFile: File? = null
-                val transactions: MutableList<FinancialTransaction>
+                val transactions: List<FinancialTransactionResponse>
                 val institution = call.getRequiredHeader("Institution") ?: return@post
                 val fileType = call.getRequiredHeader("File-Type") ?: return@post
 
-                logger.debug("Processing file for institution: $institution and file type: $fileType")
+                logger.debug("Processing $institution file with file type: $fileType")
 
                 try {
-                    file.forEachPart { part ->
-                        if (part is PartData.FileItem) {
-                            tempFile = File.createTempFile("upload_", part.originalFileName?.replace(" ", "_") ?: "tempfile")
-                            part.streamProvider().use { inputStream ->
-                                tempFile!!.outputStream().buffered().use {
-                                    inputStream.copyTo(it)
-                                }
-                            }
-                        }
-                        part.dispose()
-                    }
-
+                    tempFile = call.getTempFile()
                     val processor = TransactionProcessorFactory.getProcessor(FinancialInstitution.fromString(institution))
                     processor.withFile(tempFile)
                     processor.withFileType(fileType)
-                    transactions = processor.processFile()
+                    transactions = processor.processFile().map { FinancialTransactionResponse.from(it) }
+                    if (transactions.isEmpty()) {
+                        call.respond(HttpStatusCode.NoContent, "No transactions found")
+                        return@post
+                    }
+
                 } catch (e: Exception) {
                     logger.error("Error processing file", e)
                     call.respond(HttpStatusCode.InternalServerError, e.message ?: "Error processing file")
