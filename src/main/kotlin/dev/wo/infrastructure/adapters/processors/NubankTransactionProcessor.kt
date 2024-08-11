@@ -107,13 +107,13 @@ class NubankTransactionProcessor(
                     if (StringUtils.isNotBlank(cleanedLine)) {
                         val needToReformat = cleanedLine!!.contains(":")
                         if (lineNumber < 10 && needToReformat) {
-
-                            val lineProps: Array<String> =
-                                cleanedLine.split(splitRegex).dropLastWhile { it.isEmpty() }
-                                    .toTypedArray()
+                            val lineProps: Array<String> = cleanedLine.split(splitRegex).dropLastWhile { it.isEmpty() } .toTypedArray()
                             val property = lineProps[0]
                             val value = lineProps[1]
-                            cleanedLine = getStartingFor(property) + value + getEndingFor(property)
+                            val starting = getStartingFor(property)
+                            val ending = getEndingFor(property)
+
+                            cleanedLine = starting + value + ending
                         } else {
                             if (StringUtils.equals(cleanedLine, "<OFX>")) continue
                             val greaterThanSignIndex = cleanedLine!!.indexOf('>')
@@ -123,14 +123,14 @@ class NubankTransactionProcessor(
                                 cleanedLine = "</STMTTRN>" + System.lineSeparator() + cleanedLine
                             }
 
-                            val hasValue =
-                                cleanedLine.replace(getStartingFor(property), "").trim { it <= ' ' }.isNotEmpty()
-                            if (!cleanedLine.endsWith(getEndingFor(property)) && hasValue && endingsByProperty.containsKey(
-                                    property
-                                )
-                            ) {
+                            val starting = getStartingFor(property)
+                            val ending = getEndingFor(property)
+                            val hasValue = cleanedLine.replace(starting, "").trim { it <= ' ' }.isNotEmpty()
+
+                            if (!cleanedLine.endsWith(ending) && hasValue && endingsByProperty.containsKey(property)) {
                                 cleanedLine += endingsByProperty[property]
                             }
+
                             if (StringUtils.equals(property, "DTEND")) {
                                 cleanedLine += System.lineSeparator() + "<STMTTRN>"
                             }
