@@ -2,11 +2,13 @@ package dev.wo.infrastructure.adapters.processors
 
 import dev.wo.domain.enums.CardType
 import dev.wo.domain.enums.FinancialInstitution
+import dev.wo.domain.exceptions.FileProcessingException
 import dev.wo.domain.transactions.FinancialTransaction
 import dev.wo.domain.models.ofx.OFXDataHelper
 import dev.wo.domain.models.ofx.OFXFile
 import dev.wo.domain.models.ofx.StmtTrn
 import dev.wo.domain.services.TransactionProcessor
+import org.apache.commons.collections4.CollectionUtils
 import org.apache.commons.lang3.StringUtils
 import java.io.*
 import javax.xml.bind.JAXBContext
@@ -16,23 +18,23 @@ class NubankTransactionProcessor(
     override var file: File? = null
 ) : TransactionProcessor {
 
+    @Throws(FileProcessingException::class)
     override fun processFile(): MutableList<FinancialTransaction> {
-        this.fileType ?: throw IllegalArgumentException("File type must be set")
-        this.file ?: throw IllegalArgumentException("File must be set")
+        this.fileType ?: throw FileProcessingException("File type must be set")
+        this.file ?: throw FileProcessingException("File must be set")
 
         return when (this.fileType?.lowercase()) {
             "ofx" -> processOfxFile(this.file!!)
-            else -> throw IllegalArgumentException("Invalid file type")
+            else -> throw FileProcessingException("Invalid file type")
         }
     }
 
     private fun processOfxFile(file: File): MutableList<FinancialTransaction> {
-        val organizedFile = organizeFile(file)
-        val newFile = organizedFile?.let { unmarshalFile(it) }
+        val organizedFile: File? = organizeFile(file)
+        val newFile: OFXFile? = organizedFile?.let { unmarshalFile(it) }
 
         newFile?.let {
-            val transactions = createFinancialTransactions(it)
-            return transactions
+            return createFinancialTransactions(it)
         }
 
         return mutableListOf()
@@ -40,27 +42,27 @@ class NubankTransactionProcessor(
 
     override fun createFinancialTransactions(data: OFXFile): MutableList<FinancialTransaction> {
         val financialTransactions: MutableList<FinancialTransaction> = mutableListOf()
-        val transactionsFromFile: List<StmtTrn>? = data.getCreditCardMsgsRsV1()?.getCcStmtTrnRs()?.getCcStmtRs()?.getBankTranList()?.getStmtTrnList()
-        if (transactionsFromFile != null) {
-            for (ofxTransaction in transactionsFromFile) {
-                val value = ofxTransaction.getTrnAmt()!!.toDouble()
-                val description = ofxTransaction.getMemo()!!
-                val transactionTime = OFXDataHelper.getDate(ofxTransaction.getDtPosted())!!
-                val institutionUUID = ofxTransaction.getFitId()!!
-                val transactionType = OFXDataHelper.getTransactionType(ofxTransaction.getTrnType())
-                val cardType = CardType.CREDIT // at this moment I have only credit card invoices
-                val transaction = FinancialTransaction(
-                    value,
-                    description,
-                    transactionTime,
-                    institutionUUID,
-                    transactionType = transactionType,
-                    institution = FinancialInstitution.NUBANK,
-                    cardType = cardType
-                )
+        val transactionsFromFile: List<StmtTrn> = data.getCreditCardMsgsRsV1()?.getCcStmtTrnRs()?.getCcStmtRs()?.getBankTranList()?.getStmtTrnList().orEmpty()
+        if (CollectionUtils.isEmpty(transactionsFromFile)) return financialTransactions
 
-                financialTransactions.add(transaction)
-            }
+        for (ofxTransaction in transactionsFromFile) {
+            val value = ofxTransaction.getTrnAmt()?.toDouble() ?: continue
+            val description = ofxTransaction.getMemo() ?: ""
+            val transactionTime = OFXDataHelper.getDate(ofxTransaction.getDtPosted())?: continue
+            val institutionUUID = ofxTransaction.getFitId()?: continue
+            val transactionType = OFXDataHelper.getTransactionType(ofxTransaction.getTrnType())
+            val cardType = CardType.CREDIT // at this moment I have only credit card invoices
+            val transaction = FinancialTransaction(
+                value,
+                description,
+                transactionTime,
+                institutionUUID,
+                transactionType,
+                FinancialInstitution.NUBANK,
+                cardType
+            )
+
+            financialTransactions.add(transaction)
         }
 
         return financialTransactions
@@ -70,8 +72,7 @@ class NubankTransactionProcessor(
         try {
             return this.transformIntoXML(file!!)
         } catch (e: java.lang.Exception) {
-            e.printStackTrace()
-            return file
+            throw FileProcessingException("Error organizing file")
         }
     }
 
@@ -95,17 +96,20 @@ class NubankTransactionProcessor(
     private fun readAndTransform(file: File): String {
         val cleanedContent = StringBuilder()
         val endingsByProperty = getEndingsByProperty()
+        var lineNumber = 1
+        val splitRegex = ":".toRegex()
+
         try {
             BufferedReader(FileReader(file)).use { reader ->
                 var line: String
-                var lineNumber = 1
                 while ((reader.readLine().also { line = it }) != null) {
                     var cleanedLine: String? = line.trim { it <= ' ' }
                     if (StringUtils.isNotBlank(cleanedLine)) {
                         val needToReformat = cleanedLine!!.contains(":")
                         if (lineNumber < 10 && needToReformat) {
-                            val lineProps =
-                                cleanedLine.split(":".toRegex()).dropLastWhile { it.isEmpty() }
+
+                            val lineProps: Array<String> =
+                                cleanedLine.split(splitRegex).dropLastWhile { it.isEmpty() }
                                     .toTypedArray()
                             val property = lineProps[0]
                             val value = lineProps[1]
@@ -138,7 +142,12 @@ class NubankTransactionProcessor(
                 }
             }
         } catch (e: IOException) {
-            System.err.println("Erro ao ler o arquivo de entrada: " + e.message)
+            e.printStackTrace()
+            throw FileProcessingException("Error reading file: ${e.message}")
+        }
+
+        if (StringUtils.isBlank(cleanedContent.toString()) && lineNumber == 1) {
+            throw FileProcessingException("File is empty")
         }
 
         return cleanedContent.toString()
@@ -151,6 +160,7 @@ class NubankTransactionProcessor(
             }
         } catch (e: IOException) {
             e.printStackTrace()
+            throw FileProcessingException("Error writing file: ${e.message}")
         }
 
         return file
