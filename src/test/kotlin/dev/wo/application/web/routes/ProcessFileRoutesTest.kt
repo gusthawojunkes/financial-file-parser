@@ -52,7 +52,7 @@ class ProcessFileRoutesTest {
             }
             setBody(fileBytes)
         }
-        assertEquals(HttpStatusCode.InternalServerError, response.status)
+        assertEquals(HttpStatusCode.UnsupportedMediaType, response.status)
         assertEquals("Invalid file type", response.bodyAsText())
     }
 

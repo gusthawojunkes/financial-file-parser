@@ -1,6 +1,7 @@
 package dev.wo.infrastructure.factories
 
 import dev.wo.domain.enums.FinancialInstitution
+import dev.wo.domain.exceptions.FileProcessingException
 import dev.wo.infrastructure.adapters.processors.NubankTransactionProcessor
 import org.junit.Assert.assertThrows
 import kotlin.test.Test
@@ -16,8 +17,8 @@ class TransactionProcessorFactoryTest {
         }
 
         @Test
-        fun `should throw IllegalArgumentException`() {
-            val exception = assertThrows(IllegalArgumentException::class.java) {
+        fun `should throw FileProcessingException`() {
+            val exception = assertThrows(FileProcessingException::class.java) {
                 TransactionProcessorFactory.getProcessor(FinancialInstitution.UNKNOWN)
             }
 
