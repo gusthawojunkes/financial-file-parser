@@ -1,5 +1,6 @@
 package dev.wo.infrastructure.adapters
 
+import dev.wo.domain.exceptions.HttpException
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -20,9 +21,8 @@ public suspend fun ApplicationCall.getTempFile(): File {
     }
 }
 
-public suspend fun ApplicationCall.getRequiredHeader(headerName: String): String? {
+public suspend fun ApplicationCall.getRequiredHeader(headerName: String): String {
     return request.headers[headerName] ?: run {
-        respond(HttpStatusCode.BadRequest, "$headerName header is required")
-        null
+        throw HttpException(HttpStatusCode.BadRequest, "$headerName header is required")
     }
 }

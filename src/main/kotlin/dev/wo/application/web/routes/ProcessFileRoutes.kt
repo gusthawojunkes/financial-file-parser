@@ -22,12 +22,13 @@ fun Route.processFileRoutes() {
             post("process") {
                 var tempFile: File? = null
                 val transactions: List<FinancialTransactionResponse>
-                val institution = call.getRequiredHeader("Institution") ?: return@post
-                val fileType = call.getRequiredHeader("File-Type") ?: return@post
-
-                logger.debug("Processing $institution file with $fileType file type")
 
                 try {
+                    val institution = call.getRequiredHeader("Institution")
+                    val fileType = call.getRequiredHeader("File-Type")
+
+                    logger.debug("Processing $institution file with $fileType file type")
+
                     tempFile = call.getTempFile()
                     val isFileTypeValid = FileService.validateFileType(tempFile, fileType)
 
