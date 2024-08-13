@@ -16,7 +16,7 @@ import java.io.File
 
 private val logger = LoggerFactory.getLogger(Route::class.java)
 
-fun Route.processFileRoutes() {
+fun Route.fileRouting() {
     route("api/v1") {
         route("file") {
             post("process") {
