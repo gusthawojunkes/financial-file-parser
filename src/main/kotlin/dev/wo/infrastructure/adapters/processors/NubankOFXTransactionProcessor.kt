@@ -8,34 +8,28 @@ import dev.wo.domain.models.ofx.OFXDataHelper
 import dev.wo.domain.models.ofx.OFXFile
 import dev.wo.domain.models.ofx.StmtTrn
 import dev.wo.domain.services.TransactionProcessor
+import dev.wo.infrastructure.adapters.FileService
 import org.apache.commons.collections4.CollectionUtils
 import org.apache.commons.lang3.StringUtils
 import java.io.*
 import javax.xml.bind.JAXBContext
 
-class NubankTransactionProcessor(
-    override var fileType: String? = null,
+class NubankOFXTransactionProcessor(
     override var file: File? = null
 ) : TransactionProcessor {
 
     @Throws(FileProcessingException::class)
     override fun processFile(): MutableList<FinancialTransaction> {
-        this.fileType ?: throw FileProcessingException("File type must be set")
         this.file ?: throw FileProcessingException("File must be set")
 
-        return when (this.fileType?.lowercase()) {
-            "ofx" -> processOfxFile(this.file!!)
-            else -> throw FileProcessingException("Invalid file type")
-        }
-    }
-
-    private fun processOfxFile(file: File): MutableList<FinancialTransaction> {
-        val xmlFile: File? = toXMLFile(file)
-        val parsedFile: OFXFile? = xmlFile?.let { unmarshalFile(it) }
+        val xmlFile: File? = toXMLFile(file!!)
+        val parsedFile: OFXFile? = xmlFile?.let { FileService.unmarshalFile(it, OFXFile::class.java) }
 
         parsedFile?.let {
             return createFinancialTransactions(it)
         }
+
+        xmlFile?.delete()
 
         return mutableListOf()
     }
@@ -68,21 +62,10 @@ class NubankTransactionProcessor(
         return financialTransactions
     }
 
-    private fun unmarshalFile(file: File): OFXFile? {
-        return try {
-            val context: JAXBContext = JAXBContext.newInstance(OFXFile::class.java)
-            val unmarshaller = context.createUnmarshaller()
-            unmarshaller.unmarshal(file) as OFXFile?
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
-    }
-
     private fun toXMLFile(file: File): File {
         val content: String = turnIntoXMLContent(file)
         val emptyFile: File = File.createTempFile("upload_${System.currentTimeMillis()}", ".xml")
-        return writeNewFile(emptyFile, content)
+        return FileService.writeNewFile(emptyFile, content)
     }
 
     private fun turnIntoXMLContent(file: File): String {
@@ -143,19 +126,6 @@ class NubankTransactionProcessor(
         }
 
         return cleanedContent.toString()
-    }
-
-    private fun writeNewFile(file: File, cleanedContent: String): File {
-        try {
-            BufferedWriter(FileWriter(file)).use { writer ->
-                writer.write(cleanedContent)
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-            throw FileProcessingException("Error writing file: ${e.message}")
-        }
-
-        return file
     }
 
     private fun getStartingFor(property: String): String {

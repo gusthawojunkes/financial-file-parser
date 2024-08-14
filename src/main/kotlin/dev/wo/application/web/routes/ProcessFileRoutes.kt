@@ -36,9 +36,8 @@ fun Route.fileRouting() {
                         throw HttpException(HttpStatusCode.UnsupportedMediaType, "Invalid file type")
                     }
 
-                    val processor = TransactionProcessorFactory.getProcessor(FinancialInstitution.fromString(institution))
+                    val processor = TransactionProcessorFactory.getProcessor(FinancialInstitution.fromString(institution), fileType)
                     processor.withFile(tempFile)
-                    processor.withFileType(fileType)
                     transactions = processor.processFile().map { FinancialTransactionResponse.from(it) }
 
                     if (transactions.isEmpty()) {
