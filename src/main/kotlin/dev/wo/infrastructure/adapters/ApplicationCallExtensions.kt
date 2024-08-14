@@ -11,7 +11,7 @@ import java.io.File
 
 public suspend fun ApplicationCall.getTempFile(): File {
     return withContext(Dispatchers.IO) {
-        val tempFile = File.createTempFile("upload_", ".tmp")
+        val tempFile = File.createTempFile("upload_${System.currentTimeMillis()}", ".tmp")
         receiveStream().use { input ->
             tempFile.outputStream().use { output ->
                 input.copyTo(output)

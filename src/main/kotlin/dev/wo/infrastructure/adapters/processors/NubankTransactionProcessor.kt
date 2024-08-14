@@ -30,10 +30,10 @@ class NubankTransactionProcessor(
     }
 
     private fun processOfxFile(file: File): MutableList<FinancialTransaction> {
-        val organizedFile: File? = organizeFile(file)
-        val newFile: OFXFile? = organizedFile?.let { unmarshalFile(it) }
+        val xmlFile: File? = toXMLFile(file)
+        val parsedFile: OFXFile? = xmlFile?.let { unmarshalFile(it) }
 
-        newFile?.let {
+        parsedFile?.let {
             return createFinancialTransactions(it)
         }
 
@@ -68,14 +68,6 @@ class NubankTransactionProcessor(
         return financialTransactions
     }
 
-    private fun organizeFile(file: File?): File? {
-        try {
-            return this.transformIntoXML(file!!)
-        } catch (e: java.lang.Exception) {
-            throw FileProcessingException("Error organizing file")
-        }
-    }
-
     private fun unmarshalFile(file: File): OFXFile? {
         return try {
             val context: JAXBContext = JAXBContext.newInstance(OFXFile::class.java)
@@ -87,13 +79,13 @@ class NubankTransactionProcessor(
         }
     }
 
-    private fun transformIntoXML(file: File): File {
-        val content = readAndTransform(file)
-        val temp = writeNewFile(file, content)
-        return temp
+    private fun toXMLFile(file: File): File {
+        val content: String = turnIntoXMLContent(file)
+        val emptyFile: File = File.createTempFile("upload_${System.currentTimeMillis()}", ".xml")
+        return writeNewFile(emptyFile, content)
     }
 
-    private fun readAndTransform(file: File): String {
+    private fun turnIntoXMLContent(file: File): String {
         val cleanedContent = StringBuilder()
         val endingsByProperty = getEndingsByProperty()
         var lineNumber = 1
