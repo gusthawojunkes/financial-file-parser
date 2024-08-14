@@ -11,7 +11,7 @@ interface TransactionProcessor {
     @Throws(FileProcessingException::class)
     fun processFile(): MutableList<FinancialTransaction>
 
-    fun createFinancialTransactions(data: OFXFile): MutableList<FinancialTransaction>
+    fun <T> createFinancialTransactions(data: T): MutableList<FinancialTransaction>
 
     fun withFile(file: File?) = file.also { this.file = it }
 

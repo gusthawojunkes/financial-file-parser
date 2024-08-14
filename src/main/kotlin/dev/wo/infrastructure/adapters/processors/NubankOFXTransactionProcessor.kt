@@ -34,8 +34,9 @@ class NubankOFXTransactionProcessor(
         return mutableListOf()
     }
 
-    override fun createFinancialTransactions(data: OFXFile): MutableList<FinancialTransaction> {
+    override fun <T> createFinancialTransactions(data: T): MutableList<FinancialTransaction> {
         val financialTransactions: MutableList<FinancialTransaction> = mutableListOf()
+        data as OFXFile
         val transactionsFromFile: List<StmtTrn> = data.getCreditCardMsgsRsV1()?.getCcStmtTrnRs()?.getCcStmtRs()?.getBankTranList()?.getStmtTrnList().orEmpty()
         if (CollectionUtils.isEmpty(transactionsFromFile)) return financialTransactions
 

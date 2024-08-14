@@ -34,5 +34,5 @@ class TransactionProcessorFactoryTest {
 
         assertEquals("Invalid financial institution", exception.message)
     }
-    
+
 }
