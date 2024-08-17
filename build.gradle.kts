@@ -2,6 +2,7 @@
 val kotlin_version: String by project
 val logback_version: String by project
 val ktor_version: String by project
+val mockk_version: String by project
 
 plugins {
     kotlin("jvm") version "2.0.0"
@@ -36,7 +37,7 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("org.apache.commons:commons-lang3:3.14.0")
     implementation("org.apache.commons:commons-collections4:4.4")
-    testImplementation("io.ktor:ktor-server-test-host-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
     testImplementation("io.ktor:ktor-server-test-host:$ktor_version")
+    testImplementation("io.mockk:mockk:${mockk_version}")
 }

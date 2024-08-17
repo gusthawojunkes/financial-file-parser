@@ -9,6 +9,9 @@
 
 <p>
   <a href="https://img.shields.io/github/last-commit/gusthawojunkes/financial-file-parser">
+    <img src="https://img.shields.io/github/v/release/gusthawojunkes/financial-file-parser" alt="release" />
+  </a>
+  <a href="https://img.shields.io/github/last-commit/gusthawojunkes/financial-file-parser">
     <img src="https://img.shields.io/github/last-commit/gusthawojunkes/financial-file-parser" alt="last commit" />
   </a>
   <a href="https://github.com/gusthawojunkes/financial-file-parser/issues/">
