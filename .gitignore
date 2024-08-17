@@ -36,3 +36,7 @@ out/
 .vscode/
 
 src/main/resources/application-dev.yaml
+
+/.env
+
+.kotlin
