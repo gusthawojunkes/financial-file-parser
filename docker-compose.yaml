@@ -1,0 +1,11 @@
+services:
+  parser-api:
+    container_name: parser-api
+    build:
+      context: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/api
+    environment:
+      - PORT=${PORT}
