@@ -3,7 +3,9 @@ name: "[CI] Continuous Integration"
 on:
   pull_request:
     types:
-      - [opened, synchronize, reopened]
+      - opened
+      - synchronize
+      - reopened
 
 jobs:
   test:
