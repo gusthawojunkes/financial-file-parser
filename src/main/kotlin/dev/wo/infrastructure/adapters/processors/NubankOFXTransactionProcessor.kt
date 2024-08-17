@@ -129,13 +129,9 @@ class NubankOFXTransactionProcessor(
         return cleanedContent.toString()
     }
 
-    private fun getStartingFor(property: String): String {
-        return "<$property>"
-    }
+    private fun getStartingFor(property: String) = "<$property>"
 
-    private fun getEndingFor(property: String): String {
-        return "</$property>"
-    }
+    private fun getEndingFor(property: String) = "</$property>"
 
     private fun getEndingsByProperty(): Map<String, String> {
         val endingsByProperty: MutableMap<String, String> = HashMap()
