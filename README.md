@@ -84,6 +84,16 @@ To run tests, use the following command
 ./gradlew test
 ```
 
+## :whale: Docker usage
+### docker/.env file
+```bash
+PORT=port
+```
+### Running the application
+```bash
+docker-compose up -d
+```
+
 <!--
 ## Contributing
 Incoming...
