@@ -63,4 +63,15 @@ class FileDataHelperTest {
         assertEquals(TransactionType.UNKNOWN, transactionType)
     }
 
+    @Test
+    fun `should return UUID when UUID is valid`() {
+        val uuid = FileDataHelper.generateUUID()
+        assertEquals(36, uuid.length)
+    }
+
+    @Test
+    fun `should return UUID with a valid pattern`() {
+        val uuid = FileDataHelper.generateUUID()
+        assertEquals("8-4-4-4-12", uuid.split("-").map { it.length }.joinToString("-"))
+    }
 }
