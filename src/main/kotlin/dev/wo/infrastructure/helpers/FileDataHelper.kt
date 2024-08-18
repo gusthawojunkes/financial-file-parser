@@ -28,4 +28,8 @@ object FileDataHelper {
 
         return TransactionType.fromString(transactionTypeAsString)
     }
+
+    fun generateUUID(): String {
+        return java.util.UUID.randomUUID().toString()
+    }
 }
