@@ -18,7 +18,7 @@ object FileService {
         return availableFileTypes.contains(expectedType)
     }
 
-    fun avaliableFileTypes(): List<String> = listOf("OFX")
+    fun avaliableFileTypes(): List<String> = listOf("OFX", "CSV")
 
     public fun <T> unmarshalFile(file: File, type: Class<T>): T? {
         return try {
