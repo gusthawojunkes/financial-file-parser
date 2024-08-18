@@ -7,6 +7,7 @@ import java.io.File
 
 interface TransactionProcessor {
     var file: File?
+    var preferences: ProcessorPreferences?
 
     @Throws(FileProcessingException::class)
     fun processFile(): MutableList<FinancialTransaction>
@@ -14,5 +15,7 @@ interface TransactionProcessor {
     fun <T> createFinancialTransactions(data: T): MutableList<FinancialTransaction>
 
     fun withFile(file: File?) = file.also { this.file = it }
+
+    fun withPreferences(preferences: ProcessorPreferences?) = preferences.also { this.preferences = it }
 
 }

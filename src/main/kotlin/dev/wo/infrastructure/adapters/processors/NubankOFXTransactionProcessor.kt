@@ -5,6 +5,7 @@ import dev.wo.domain.enums.FinancialInstitution
 import dev.wo.domain.exceptions.FileProcessingException
 import dev.wo.domain.models.ofx.OFXFile
 import dev.wo.domain.models.ofx.StmtTrn
+import dev.wo.domain.services.ProcessorPreferences
 import dev.wo.domain.services.TransactionProcessor
 import dev.wo.domain.transactions.FinancialTransaction
 import dev.wo.infrastructure.adapters.FileService
@@ -14,7 +15,8 @@ import org.apache.commons.lang3.StringUtils
 import java.io.*
 
 class NubankOFXTransactionProcessor(
-    override var file: File? = null
+    override var file: File? = null,
+    override var preferences: ProcessorPreferences? = null
 ) : TransactionProcessor {
 
     @Throws(FileProcessingException::class)
