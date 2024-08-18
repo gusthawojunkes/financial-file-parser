@@ -28,7 +28,7 @@ class NubankOFXTransactionProcessorTest {
     @Test
     fun `when processFile is called with a non empty file then it should return a list of transactions`() {
         val processor = NubankOFXTransactionProcessor(
-            file = File("src/test/resources/files/nubank.ofx")
+            file = File("src/test/resources/files/ofx/nubank.ofx")
         )
 
         val transactions = processor.processFile()
@@ -39,7 +39,7 @@ class NubankOFXTransactionProcessorTest {
     @Test
     fun `when processFile is called with a empty file then it should return a empty list`() {
         val processor = NubankOFXTransactionProcessor(
-            file = File("src/test/resources/files/empty.ofx")
+            file = File("src/test/resources/files/ofx/empty.ofx")
         )
 
         val transactions = processor.processFile()
