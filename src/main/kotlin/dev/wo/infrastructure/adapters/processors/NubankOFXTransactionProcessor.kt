@@ -3,16 +3,15 @@ package dev.wo.infrastructure.adapters.processors
 import dev.wo.domain.enums.CardType
 import dev.wo.domain.enums.FinancialInstitution
 import dev.wo.domain.exceptions.FileProcessingException
-import dev.wo.domain.transactions.FinancialTransaction
-import dev.wo.domain.models.ofx.OFXDataHelper
 import dev.wo.domain.models.ofx.OFXFile
 import dev.wo.domain.models.ofx.StmtTrn
 import dev.wo.domain.services.TransactionProcessor
+import dev.wo.domain.transactions.FinancialTransaction
 import dev.wo.infrastructure.adapters.FileService
+import dev.wo.infrastructure.helpers.FileDataHelper
 import org.apache.commons.collections4.CollectionUtils
 import org.apache.commons.lang3.StringUtils
 import java.io.*
-import javax.xml.bind.JAXBContext
 
 class NubankOFXTransactionProcessor(
     override var file: File? = null
@@ -43,9 +42,9 @@ class NubankOFXTransactionProcessor(
         for (ofxTransaction in transactionsFromFile) {
             val value = ofxTransaction.getTrnAmt()?.toDouble() ?: continue
             val description = ofxTransaction.getMemo() ?: ""
-            val transactionTime = OFXDataHelper.getDate(ofxTransaction.getDtPosted())?: continue
+            val transactionTime = FileDataHelper.getDate(ofxTransaction.getDtPosted())?: continue
             val institutionUUID = ofxTransaction.getFitId()?: continue
-            val transactionType = OFXDataHelper.getTransactionType(ofxTransaction.getTrnType())
+            val transactionType = FileDataHelper.getTransactionType(ofxTransaction.getTrnType())
             val cardType = CardType.CREDIT // at this moment I have only credit card invoices
             val transaction = FinancialTransaction(
                 value,

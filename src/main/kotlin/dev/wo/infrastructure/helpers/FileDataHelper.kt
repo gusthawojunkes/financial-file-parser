@@ -1,15 +1,15 @@
-package dev.wo.domain.models.ofx
+package dev.wo.infrastructure.helpers
 
 import dev.wo.domain.enums.TransactionType
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
-object OFXDataHelper {
-    fun getDate(date: String?): LocalDateTime? {
+object FileDataHelper {
+    fun getDate(date: String?, pattern: String = "yyyyMMddHHmmss"): LocalDateTime? {
         date ?: return null
         val inputWithoutTimeZone = date.replace("\\[.*\\]".toRegex(), "")
-        val formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss")
+        val formatter = DateTimeFormatter.ofPattern(pattern)
         return try {
             LocalDateTime.parse(inputWithoutTimeZone, formatter)
         } catch (e: DateTimeParseException) {
