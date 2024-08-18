@@ -64,7 +64,7 @@ class NubankOFXTransactionProcessor(
         return financialTransactions
     }
 
-    private fun toXMLFile(file: File): File {
+    fun toXMLFile(file: File): File {
         val content: String = turnIntoXMLContent(file)
         val emptyFile: File = File.createTempFile("upload_${System.currentTimeMillis()}", ".xml")
         return FileService.writeNewFile(emptyFile, content)

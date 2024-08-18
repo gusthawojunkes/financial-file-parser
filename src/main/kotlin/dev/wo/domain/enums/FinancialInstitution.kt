@@ -5,7 +5,7 @@ enum class FinancialInstitution (val description: String) {
     NUBANK("Nubank"),
     ITAU("Itaú"),
     C6_BANK("C6 Bank"),
-    ANY("Qualquer"),
+    ANY("Any"),
     UNKNOWN("Desconhecida");
 
     companion object {

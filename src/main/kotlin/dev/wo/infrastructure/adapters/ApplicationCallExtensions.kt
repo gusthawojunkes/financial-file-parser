@@ -30,7 +30,7 @@ public suspend fun ApplicationCall.getRequiredHeader(headerName: String): String
 
 public suspend fun ApplicationCall.getPreferences(): ProcessorPreferences {
     val separator: Char = request.headers["CSV-Separator"]?.firstOrNull() ?: ','
-    val dateTimePattern: String = request.headers["Date]Time-Pattern"]?: "dd/MM/yyyy HH:mm:ss"
+    val dateTimePattern: String = request.headers["DateTime-Pattern"]?: "dd/MM/yyyy HH:mm:ss"
 
     return ProcessorPreferences(separator, dateTimePattern)
 }
