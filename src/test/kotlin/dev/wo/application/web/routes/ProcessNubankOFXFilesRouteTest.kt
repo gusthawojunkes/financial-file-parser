@@ -16,11 +16,11 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-class ProcessFileRoutesTest {
+class ProcessNubankOFXFilesRouteTest {
 
     @Test
     fun `processing a ofx file from nubank`() = testApplication {
-        val fileBytes = File("src/test/resources/files/nubank.ofx").readBytes()
+        val fileBytes = File("src/test/resources/files/ofx/nubank.ofx").readBytes()
         val response = client.post("/api/v1/file/process") {
             headers {
                 append("Institution", "Nubank")
@@ -44,7 +44,7 @@ class ProcessFileRoutesTest {
 
     @Test
     fun `processing a file type that is not implemented in NubankTransactionProcessor`() = testApplication {
-        val fileBytes = File("src/test/resources/files/nubank.ofx").readBytes()
+        val fileBytes = File("src/test/resources/files/ofx/nubank.ofx").readBytes()
         val response = client.post("/api/v1/file/process") {
             headers {
                 append("Institution", "Nubank")
@@ -58,7 +58,7 @@ class ProcessFileRoutesTest {
 
     @Test
     fun `processing a file without Institution required header`() = testApplication {
-        val fileBytes = File("src/test/resources/files/nubank.ofx").readBytes()
+        val fileBytes = File("src/test/resources/files/ofx/nubank.ofx").readBytes()
         val response = client.post("/api/v1/file/process") {
             headers {
                 append("File-Type", "OFX")
@@ -71,7 +71,7 @@ class ProcessFileRoutesTest {
 
     @Test
     fun `processing a file without File-Type required header`() = testApplication {
-        val fileBytes = File("src/test/resources/files/nubank.ofx").readBytes()
+        val fileBytes = File("src/test/resources/files/ofx/nubank.ofx").readBytes()
         val response = client.post("/api/v1/file/process") {
             headers {
                 append("Institution", "Nubank")
@@ -84,7 +84,7 @@ class ProcessFileRoutesTest {
 
     @Test
     fun `processing a file with invalid financial institution`() = testApplication {
-        val fileBytes = File("src/test/resources/files/nubank.ofx").readBytes()
+        val fileBytes = File("src/test/resources/files/ofx/nubank.ofx").readBytes()
         val response = client.post("/api/v1/file/process") {
             headers {
                 append("Institution", "Invalid")
@@ -98,7 +98,7 @@ class ProcessFileRoutesTest {
 
     @Test
     fun `processing a file with no transactions found`() = testApplication {
-        val fileBytes = File("src/test/resources/files/empty.ofx").readBytes()
+        val fileBytes = File("src/test/resources/files/ofx/empty.ofx").readBytes()
         val response = client.post("/api/v1/file/process") {
             headers {
                 append("Institution", "Nubank")
@@ -108,6 +108,20 @@ class ProcessFileRoutesTest {
         }
         assertEquals(HttpStatusCode.NoContent, response.status)
         assertEquals("No transactions found", response.bodyAsText())
+    }
+
+    @Test
+    fun `processing a file with invalid file type`() = testApplication {
+        val fileBytes = File("src/test/resources/files/ofx/nubank.ofx").readBytes()
+        val response = client.post("/api/v1/file/process") {
+            headers {
+                append("Institution", "Nubank")
+                append("File-Type", "CSV")
+            }
+            setBody(fileBytes)
+        }
+        assertEquals(HttpStatusCode.InternalServerError, response.status)
+        assertEquals("Invalid file type for Nubank", response.bodyAsText())
     }
 
 }

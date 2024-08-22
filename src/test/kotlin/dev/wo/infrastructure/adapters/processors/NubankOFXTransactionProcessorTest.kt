@@ -3,10 +3,14 @@ package dev.wo.infrastructure.adapters.processors
 import dev.wo.domain.exceptions.FileProcessingException
 import dev.wo.domain.models.ofx.OFXFile
 import dev.wo.domain.models.ofx.StmtTrn
+import dev.wo.infrastructure.adapters.FileService
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import org.junit.Assert.assertThrows
+import java.io.BufferedReader
 import java.io.File
+import java.io.FileReader
 import java.io.IOException
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -28,7 +32,7 @@ class NubankOFXTransactionProcessorTest {
     @Test
     fun `when processFile is called with a non empty file then it should return a list of transactions`() {
         val processor = NubankOFXTransactionProcessor(
-            file = File("src/test/resources/files/nubank.ofx")
+            file = File("src/test/resources/files/ofx/nubank.ofx")
         )
 
         val transactions = processor.processFile()
@@ -39,7 +43,7 @@ class NubankOFXTransactionProcessorTest {
     @Test
     fun `when processFile is called with a empty file then it should return a empty list`() {
         val processor = NubankOFXTransactionProcessor(
-            file = File("src/test/resources/files/empty.ofx")
+            file = File("src/test/resources/files/ofx/empty.ofx")
         )
 
         val transactions = processor.processFile()

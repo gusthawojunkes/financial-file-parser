@@ -4,6 +4,7 @@ import dev.wo.application.web.resource.response.FinancialTransactionResponse
 import dev.wo.domain.enums.FinancialInstitution
 import dev.wo.domain.exceptions.HttpException
 import dev.wo.infrastructure.adapters.FileService
+import dev.wo.infrastructure.adapters.getPreferences
 import dev.wo.infrastructure.adapters.getRequiredHeader
 import dev.wo.infrastructure.adapters.getTempFile
 import dev.wo.infrastructure.factories.TransactionProcessorFactory
@@ -26,6 +27,7 @@ fun Route.fileRouting() {
                 try {
                     val institution = call.getRequiredHeader("Institution")
                     val fileType = call.getRequiredHeader("File-Type")
+                    val preferences = call.getPreferences()
 
                     logger.debug("Processing $institution file with $fileType file type")
 
@@ -38,6 +40,7 @@ fun Route.fileRouting() {
 
                     val processor = TransactionProcessorFactory.getProcessor(FinancialInstitution.fromString(institution), fileType)
                     processor.withFile(tempFile)
+                    processor.withPreferences(preferences)
                     transactions = processor.processFile().map { FinancialTransactionResponse.from(it) }
 
                     if (transactions.isEmpty()) {

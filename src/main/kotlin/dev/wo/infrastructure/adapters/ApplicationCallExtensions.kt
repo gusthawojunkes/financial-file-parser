@@ -1,6 +1,7 @@
 package dev.wo.infrastructure.adapters
 
 import dev.wo.domain.exceptions.HttpException
+import dev.wo.domain.services.ProcessorPreferences
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -25,4 +26,11 @@ public suspend fun ApplicationCall.getRequiredHeader(headerName: String): String
     return request.headers[headerName] ?: run {
         throw HttpException(HttpStatusCode.BadRequest, "$headerName header is required")
     }
+}
+
+public suspend fun ApplicationCall.getPreferences(): ProcessorPreferences {
+    val separator: Char = request.headers["CSV-Separator"]?.firstOrNull() ?: ','
+    val dateTimePattern: String = request.headers["DateTime-Pattern"]?: "dd/MM/yyyy HH:mm:ss"
+
+    return ProcessorPreferences(separator, dateTimePattern)
 }

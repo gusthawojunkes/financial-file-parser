@@ -41,4 +41,10 @@ class FinancialInstitutionTest {
             assertEquals(FinancialInstitution.UNKNOWN, financialInstitution)
         }
 
+    @Test
+    fun `should return Any when description is 'Any'`() {
+        val financialInstitution = FinancialInstitution.fromString("Any")
+        assertEquals(FinancialInstitution.ANY, financialInstitution)
+    }
+
 }
