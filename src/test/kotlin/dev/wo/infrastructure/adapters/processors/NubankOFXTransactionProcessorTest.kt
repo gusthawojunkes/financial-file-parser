@@ -4,6 +4,7 @@ import dev.wo.domain.exceptions.FileProcessingException
 import dev.wo.domain.models.ofx.OFXFile
 import dev.wo.domain.models.ofx.StmtTrn
 import dev.wo.infrastructure.adapters.FileService
+import io.ktor.http.*
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -12,9 +13,7 @@ import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
 import java.io.IOException
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class NubankOFXTransactionProcessorTest {
 
@@ -22,11 +21,11 @@ class NubankOFXTransactionProcessorTest {
     fun `when processFile is called without a file then it should throw an FileProcessingException`() {
         val processor = NubankOFXTransactionProcessor(file = null)
 
-        val exception = assertThrows(FileProcessingException::class.java) {
-            processor.processFile()
-        }
-
-        assertEquals("File must be set", exception.message)
+        val result = processor.processFile()
+        assertNotNull(result)
+        assertNull(result.data)
+        assertEquals("File must be set", result.message)
+        assertEquals(HttpStatusCode.InternalServerError, result.status)
     }
 
     @Test
@@ -35,9 +34,9 @@ class NubankOFXTransactionProcessorTest {
             file = File("src/test/resources/files/ofx/nubank.ofx")
         )
 
-        val transactions = processor.processFile()
-
-        assertTrue(transactions.isNotEmpty())
+        val result = processor.processFile()
+        assertNotNull(result.data)
+        assertTrue(result.data!!.isNotEmpty())
     }
 
     @Test
@@ -46,9 +45,10 @@ class NubankOFXTransactionProcessorTest {
             file = File("src/test/resources/files/ofx/empty.ofx")
         )
 
-        val transactions = processor.processFile()
+        val result = processor.processFile()
 
-        assertTrue(transactions.isEmpty())
+        assertNotNull(result.data)
+        assertTrue(result.data!!.isEmpty())
     }
 
     @Test
