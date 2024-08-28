@@ -51,5 +51,4 @@ dependencies {
 
 tasks.register("stage") {
     dependsOn("build")
-    dependsOn("run")
 }
