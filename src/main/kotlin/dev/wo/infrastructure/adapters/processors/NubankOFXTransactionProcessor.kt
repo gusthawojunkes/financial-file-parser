@@ -1,5 +1,6 @@
 package dev.wo.infrastructure.adapters.processors
 
+import dev.wo.domain.common.ProcessingResult
 import dev.wo.domain.enums.CardType
 import dev.wo.domain.enums.FinancialInstitution
 import dev.wo.domain.exceptions.FileProcessingException
@@ -10,6 +11,7 @@ import dev.wo.domain.services.TransactionProcessor
 import dev.wo.domain.transactions.FinancialTransaction
 import dev.wo.infrastructure.adapters.FileService
 import dev.wo.infrastructure.helpers.FileDataHelper
+import io.ktor.http.*
 import org.apache.commons.collections4.CollectionUtils
 import org.apache.commons.lang3.StringUtils
 import java.io.*
@@ -20,22 +22,27 @@ class NubankOFXTransactionProcessor(
 ) : TransactionProcessor {
 
     @Throws(FileProcessingException::class)
-    override fun processFile(): MutableList<FinancialTransaction> {
-        this.file ?: throw FileProcessingException("File must be set")
+    override fun processFile(): ProcessingResult<List<FinancialTransaction>> {
+        try {
+            this.file ?: throw FileProcessingException("File must be set")
 
-        val xmlFile: File? = toXMLFile(file!!)
-        val parsedFile: OFXFile? = xmlFile?.let { FileService.unmarshalFile(it, OFXFile::class.java) }
+            val xmlFile: File? = toXMLFile(file!!)
+            val parsedFile: OFXFile? = xmlFile?.let { FileService.unmarshalFile(it, OFXFile::class.java) }
 
-        parsedFile?.let {
-            return createFinancialTransactions(it)
+            parsedFile?.let {
+                return ProcessingResult.success(createFinancialTransactions(it))
+            }
+
+            xmlFile?.delete()
+
+            return ProcessingResult.success(emptyList())
+        } catch (e: FileProcessingException) {
+            return ProcessingResult.error(e.message, HttpStatusCode.InternalServerError)
         }
 
-        xmlFile?.delete()
-
-        return mutableListOf()
     }
 
-    override fun <T> createFinancialTransactions(data: T): MutableList<FinancialTransaction> {
+    override fun <T> createFinancialTransactions(data: T): List<FinancialTransaction> {
         val financialTransactions: MutableList<FinancialTransaction> = mutableListOf()
         data as OFXFile
         val transactionsFromFile: List<StmtTrn> = data.getCreditCardMsgsRsV1()?.getCcStmtTrnRs()?.getCcStmtRs()?.getBankTranList()?.getStmtTrnList().orEmpty()

@@ -2,8 +2,7 @@ package dev.wo.infrastructure.adapters.processors
 
 import dev.wo.domain.services.ProcessorPreferences
 import java.io.File
-import kotlin.test.Test
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class CommonCSVTransactionProcessorTest {
     @Test
@@ -12,9 +11,10 @@ class CommonCSVTransactionProcessorTest {
             file = File("src/test/resources/files/csv/c6_comma.csv")
         )
 
-        val transactions = processor.processFile()
+        val result = processor.processFile()
 
-        assertTrue(transactions.isNotEmpty())
+        assertNotNull(result.data)
+        assertTrue(result.data!!.isNotEmpty())
     }
 
     @Test
@@ -24,9 +24,10 @@ class CommonCSVTransactionProcessorTest {
             preferences = ProcessorPreferences(csvSeparator = ',')
         )
 
-        val transactions = processor.processFile()
+        val result = processor.processFile()
 
-        assertTrue(transactions.isNotEmpty())
+        assertNotNull(result.data)
+        assertTrue(result.data!!.isNotEmpty())
     }
 
     @Test
@@ -36,9 +37,10 @@ class CommonCSVTransactionProcessorTest {
             preferences = ProcessorPreferences(csvSeparator = ';')
         )
 
-        val transactions = processor.processFile()
+        val result = processor.processFile()
 
-        assertTrue(transactions.isNotEmpty())
+        assertNotNull(result.data)
+        assertTrue(result.data!!.isNotEmpty())
     }
 
     @Test
@@ -47,9 +49,10 @@ class CommonCSVTransactionProcessorTest {
             file = File("src/test/resources/files/csv/c6_semicolon.csv")
         )
 
-        val transactions = processor.processFile()
+        val result = processor.processFile()
 
-        assertTrue(transactions.isEmpty())
+        assertNotNull(result.data)
+        assertTrue(result.data!!.isEmpty())
     }
 
     @Test
@@ -59,9 +62,10 @@ class CommonCSVTransactionProcessorTest {
             preferences = ProcessorPreferences(csvSeparator = ';')
         )
 
-        val transactions = processor.processFile()
+        val result = processor.processFile()
 
-        assertTrue(transactions.isEmpty())
+        assertNotNull(result.data)
+        assertTrue(result.data!!.isEmpty())
     }
 
 }

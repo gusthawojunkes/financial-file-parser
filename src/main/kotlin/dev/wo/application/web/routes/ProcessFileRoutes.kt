@@ -22,8 +22,7 @@ fun Route.fileRouting() {
         route("file") {
             post("process") {
                 var tempFile: File? = null
-                val transactions: List<FinancialTransactionResponse>
-
+                var transactions: List<FinancialTransactionResponse>
                 try {
                     val institution = call.getRequiredHeader("Institution")
                     val fileType = call.getRequiredHeader("File-Type")
@@ -41,26 +40,28 @@ fun Route.fileRouting() {
                     val processor = TransactionProcessorFactory.getProcessor(FinancialInstitution.fromString(institution), fileType)
                     processor.withFile(tempFile)
                     processor.withPreferences(preferences)
-                    transactions = processor.processFile().map { FinancialTransactionResponse.from(it) }
+                    transactions = processor.processFile().let {
+                        if (it.data == null || it.data.isEmpty()) {
+                            throw HttpException(HttpStatusCode.NoContent, "No transactions found")
+                        }
 
-                    if (transactions.isEmpty()) {
-                        throw HttpException(HttpStatusCode.NoContent, "No transactions found")
+                        it.data.map { FinancialTransactionResponse.from(it) }
+                    }.also {
+                        logger.debug("Transactions size: {}", it.size)
                     }
 
                 } catch (httpException: HttpException) {
                     logger.error("Error processing file", httpException)
                     call.respond(httpException.status, httpException.message)
                     return@post
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    call.respond(HttpStatusCode.InternalServerError, e.message ?: "Error processing file")
+                } catch (exception: Exception) {
+                    exception.printStackTrace()
+                    call.respond(HttpStatusCode.InternalServerError, exception.message ?: "Error processing file")
                     return@post
                 } finally {
                     tempFile?.deleteOnExit()
                 }
 
-
-                logger.debug("Transactions size: {}", transactions.size)
                 logger.debug("Processing finished")
                 call.respond(HttpStatusCode.OK, transactions)
             }

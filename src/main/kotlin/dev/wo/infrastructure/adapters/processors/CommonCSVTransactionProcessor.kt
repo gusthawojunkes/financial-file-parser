@@ -1,8 +1,10 @@
 package dev.wo.infrastructure.adapters.processors
 
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
+import dev.wo.domain.common.ProcessingResult
 import dev.wo.domain.enums.CardType
 import dev.wo.domain.enums.FinancialInstitution
+import dev.wo.domain.exceptions.FileProcessingException
 import dev.wo.domain.services.ProcessorPreferences
 import dev.wo.domain.services.TransactionProcessor
 import dev.wo.domain.transactions.FinancialTransaction
@@ -14,7 +16,7 @@ class CommonCSVTransactionProcessor(
     override var preferences: ProcessorPreferences? = null
 ) : TransactionProcessor {
 
-    override fun processFile(): MutableList<FinancialTransaction> {
+    override fun processFile(): ProcessingResult<List<FinancialTransaction>> {
         val transactions = mutableListOf<FinancialTransaction>()
         val reader = csvReader {
             delimiter = preferences?.csvSeparator ?: ','
@@ -23,10 +25,10 @@ class CommonCSVTransactionProcessor(
         file?.let {
             return reader.open(it) {
                 val parsedCSV = readAllWithHeaderAsSequence()
-                return@open createFinancialTransactions(parsedCSV)
+                return@open ProcessingResult.success(createFinancialTransactions(parsedCSV))
             }
         }
-        return transactions
+        return ProcessingResult.success(transactions)
     }
 
     override fun <T> createFinancialTransactions(data: T): MutableList<FinancialTransaction> {

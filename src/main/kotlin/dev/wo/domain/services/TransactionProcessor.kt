@@ -1,5 +1,6 @@
 package dev.wo.domain.services
 
+import dev.wo.domain.common.ProcessingResult
 import dev.wo.domain.exceptions.FileProcessingException
 import dev.wo.domain.transactions.FinancialTransaction
 import dev.wo.domain.models.ofx.OFXFile
@@ -10,9 +11,9 @@ interface TransactionProcessor {
     var preferences: ProcessorPreferences?
 
     @Throws(FileProcessingException::class)
-    fun processFile(): MutableList<FinancialTransaction>
+    fun processFile(): ProcessingResult<List<FinancialTransaction>>
 
-    fun <T> createFinancialTransactions(data: T): MutableList<FinancialTransaction>
+    fun <T> createFinancialTransactions(data: T): List<FinancialTransaction>
 
     fun withFile(file: File?) = file.also { this.file = it }
 
