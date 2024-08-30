@@ -35,7 +35,7 @@ dependencies {
     implementation("io.ktor:ktor-server-core-jvm")
     implementation("io.ktor:ktor-serialization-gson:$ktor_version")
     implementation("io.ktor:ktor-server-swagger:$ktor_version")
-    implementation("io.ktor:ktor-server-netty-jvm")
+    implementation("io.ktor:ktor-server-netty:$ktor_version")
     implementation("io.ktor:ktor-server-config-yaml")
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("javax.xml.bind:jaxb-api:2.2.4")

@@ -1,1 +1,1 @@
-web: ./gradlew run -Xmx512m
+web: java -Dserver.port=$PORT -Dlogging.level.root=$LOG_LEVEL ./gradlew run

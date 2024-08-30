@@ -4,6 +4,7 @@ ktor:
             - dev.wo.ApplicationKt.module
     deployment:
         port: "$PORT:8080"
+        environment: prod
 
 logging:
     level:
