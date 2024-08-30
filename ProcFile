@@ -1,1 +1,1 @@
-web: java -Dserver.port=$PORT -Dlogging.level.root=$LOG_LEVEL ./gradlew run
+web: ./build/install/dev.wo.financial-file-parser/bin/dev.wo.financial-file-parser

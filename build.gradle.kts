@@ -49,6 +49,6 @@ dependencies {
     testImplementation("io.mockk:mockk:${mockk_version}")
 }
 
-tasks.register("stage") {
-    dependsOn("build")
+tasks {
+    create("stage").dependsOn("installDist")
 }
