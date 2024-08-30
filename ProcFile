@@ -1,1 +1,1 @@
-web: ./build/install/dev.wo.financial-file-parser/bin/dev.wo.financial-file-parser
+web: java -jar build/libs/financial-file-parser-all.jar
