@@ -1,5 +1,8 @@
 package dev.wo
 
+import dev.wo.infrastructure.adapters.messaging.RabbitMQConfig
+import dev.wo.infrastructure.adapters.messaging.RabbitMQListener
+import dev.wo.infrastructure.adapters.messaging.RabbitMQSender
 import dev.wo.plugins.*
 import io.ktor.server.application.*
 

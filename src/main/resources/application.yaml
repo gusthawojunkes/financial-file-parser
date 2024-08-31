@@ -11,3 +11,9 @@ logging:
 
 app:
     profile: "$PROFILE:default"
+
+rabbitmq:
+    host: "$RABBITMQ_HOST:localhost"
+    port: "$RABBITMQ_PORT:5672"
+    user: "$RABBITMQ_DEFAULT_USER:guest"
+    password: "$RABBITMQ_DEFAULT_PASS:guest"
