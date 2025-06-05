@@ -3,10 +3,12 @@ package dev.wo.infrastructure.adapters.processors
 import dev.wo.domain.common.ProcessingResult
 import dev.wo.domain.enums.CardType
 import dev.wo.domain.enums.FinancialInstitution
+import dev.wo.domain.enums.InvoiceType
 import dev.wo.domain.exceptions.FileProcessingException
-import dev.wo.domain.models.ofx.OFXFile
+import dev.wo.domain.models.ofx.accountstatement.OFXFileAccountStatement
+import dev.wo.domain.models.ofx.OFXFileCreditInvoice
 import dev.wo.domain.models.ofx.StmtTrn
-import dev.wo.domain.services.ProcessorPreferences
+import dev.wo.domain.services.ProcessorConfiguration
 import dev.wo.domain.services.TransactionProcessor
 import dev.wo.domain.transactions.FinancialTransaction
 import dev.wo.infrastructure.adapters.FileService
@@ -18,7 +20,7 @@ import java.io.*
 
 class NubankOFXTransactionProcessor(
     override var file: File? = null,
-    override var preferences: ProcessorPreferences? = null
+    override var preferences: ProcessorConfiguration? = null
 ) : TransactionProcessor {
 
     @Throws(FileProcessingException::class)
@@ -27,7 +29,7 @@ class NubankOFXTransactionProcessor(
             this.file ?: throw FileProcessingException("File must be set")
 
             val xmlFile: File? = toXMLFile(file!!)
-            val parsedFile: OFXFile? = xmlFile?.let { FileService.unmarshalFile(it, OFXFile::class.java) }
+            val parsedFile: Any? = getParsedFile(xmlFile)
 
             parsedFile?.let {
                 return ProcessingResult.success(createFinancialTransactions(it))
@@ -44,9 +46,11 @@ class NubankOFXTransactionProcessor(
 
     override fun <T> createFinancialTransactions(data: T): List<FinancialTransaction> {
         val financialTransactions: MutableList<FinancialTransaction> = mutableListOf()
-        data as OFXFile
-        val transactionsFromFile: List<StmtTrn> = data.getCreditCardMsgsRsV1()?.getCcStmtTrnRs()?.getCcStmtRs()?.getBankTranList()?.getStmtTrnList().orEmpty()
+        val transactionsFromFile: List<StmtTrn> = getStatements(data)
         if (CollectionUtils.isEmpty(transactionsFromFile)) return financialTransactions
+
+        val invoiceType = this.preferences?.invoiceType ?: InvoiceType.CREDIT_INVOICE
+        val cardType = if (invoiceType == InvoiceType.CREDIT_INVOICE) CardType.CREDIT else CardType.DEBIT
 
         for (ofxTransaction in transactionsFromFile) {
             val value = ofxTransaction.getTrnAmt()?.toDouble() ?: continue
@@ -54,7 +58,7 @@ class NubankOFXTransactionProcessor(
             val transactionTime = FileDataHelper.getDate(ofxTransaction.getDtPosted())?: continue
             val institutionUUID = ofxTransaction.getFitId()?: continue
             val transactionType = FileDataHelper.getTransactionType(ofxTransaction.getTrnType())
-            val cardType = CardType.CREDIT // at this moment I have only credit card invoices
+
             val transaction = FinancialTransaction(
                 value,
                 description,
@@ -69,6 +73,28 @@ class NubankOFXTransactionProcessor(
         }
 
         return financialTransactions
+    }
+
+    fun <T> getStatements(data: T): List<StmtTrn> {
+        if (data is OFXFileAccountStatement) {
+            data as OFXFileAccountStatement
+            return data.getBankMsgsRsV1()?.getStmtTrnRs()?.stmtRs?.bankTranList?.stmtTrnList.orEmpty()
+        }
+
+        data as OFXFileCreditInvoice
+        return data.getCreditCardMsgsRsV1()?.getCcStmtTrnRs()?.getCcStmtRs()?.getBankTranList()?.getStmtTrnList().orEmpty()
+    }
+
+    fun <T> getParsedFile(xmlFile: File?): T? {
+        val parsedFile = when (this.preferences?.invoiceType) {
+            InvoiceType.CREDIT_INVOICE -> xmlFile?.let { FileService.unmarshalFile(it, OFXFileCreditInvoice::class.java) as T? }
+            InvoiceType.ACCOUNT_STATEMENT -> xmlFile?.let { FileService.unmarshalFile(it, OFXFileAccountStatement::class.java) as T? }
+            else -> {
+                throw FileProcessingException("Unsupported invoice type: ${this.preferences?.invoiceType}")
+            }
+        }
+
+        return parsedFile
     }
 
     fun toXMLFile(file: File): File {

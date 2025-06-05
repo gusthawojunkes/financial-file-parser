@@ -25,6 +25,7 @@ class ProcessNubankOFXFilesRouteTest {
             headers {
                 append("Institution", "Nubank")
                 append("File-Type", "OFX")
+                append("Invoice-Type", "CREDIT_INVOICE")
             }
             setBody(fileBytes)
         }
@@ -49,6 +50,7 @@ class ProcessNubankOFXFilesRouteTest {
             headers {
                 append("Institution", "Nubank")
                 append("File-Type", "NotImplemented")
+                append("Invoice-Type", "CREDIT_INVOICE")
             }
             setBody(fileBytes)
         }
@@ -89,6 +91,7 @@ class ProcessNubankOFXFilesRouteTest {
             headers {
                 append("Institution", "Invalid")
                 append("File-Type", "OFX")
+                append("Invoice-Type", "CREDIT_INVOICE")
             }
             setBody(fileBytes)
         }
@@ -103,6 +106,7 @@ class ProcessNubankOFXFilesRouteTest {
             headers {
                 append("Institution", "Nubank")
                 append("File-Type", "OFX")
+                append("Invoice-Type", "CREDIT_INVOICE")
             }
             setBody(fileBytes)
         }
@@ -117,6 +121,7 @@ class ProcessNubankOFXFilesRouteTest {
             headers {
                 append("Institution", "Nubank")
                 append("File-Type", "CSV")
+                append("Invoice-Type", "CREDIT_INVOICE")
             }
             setBody(fileBytes)
         }

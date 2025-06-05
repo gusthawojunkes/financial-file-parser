@@ -4,8 +4,7 @@ import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import dev.wo.domain.common.ProcessingResult
 import dev.wo.domain.enums.CardType
 import dev.wo.domain.enums.FinancialInstitution
-import dev.wo.domain.exceptions.FileProcessingException
-import dev.wo.domain.services.ProcessorPreferences
+import dev.wo.domain.services.ProcessorConfiguration
 import dev.wo.domain.services.TransactionProcessor
 import dev.wo.domain.transactions.FinancialTransaction
 import dev.wo.infrastructure.helpers.FileDataHelper
@@ -13,7 +12,7 @@ import java.io.File
 
 class CommonCSVTransactionProcessor(
     override var file: File? = null,
-    override var preferences: ProcessorPreferences? = null
+    override var preferences: ProcessorConfiguration? = null
 ) : TransactionProcessor {
 
     override fun processFile(): ProcessingResult<List<FinancialTransaction>> {

@@ -1,6 +1,6 @@
 package dev.wo.infrastructure.adapters.processors
 
-import dev.wo.domain.services.ProcessorPreferences
+import dev.wo.domain.services.ProcessorConfiguration
 import java.io.File
 import kotlin.test.*
 
@@ -21,7 +21,7 @@ class CommonCSVTransactionProcessorTest {
     fun `when processFile is called with comma separated file then the file should be processed normally`() {
         val processor = CommonCSVTransactionProcessor(
             file = File("src/test/resources/files/csv/c6_comma.csv"),
-            preferences = ProcessorPreferences(csvSeparator = ',')
+            preferences = ProcessorConfiguration(csvSeparator = ',')
         )
 
         val result = processor.processFile()
@@ -34,7 +34,7 @@ class CommonCSVTransactionProcessorTest {
     fun `when processFile is called with semicolon separated file then the file should be processed normally`() {
         val processor = CommonCSVTransactionProcessor(
             file = File("src/test/resources/files/csv/c6_semicolon.csv"),
-            preferences = ProcessorPreferences(csvSeparator = ';')
+            preferences = ProcessorConfiguration(csvSeparator = ';')
         )
 
         val result = processor.processFile()
@@ -59,7 +59,7 @@ class CommonCSVTransactionProcessorTest {
     fun `when processFile is called with a comma separated file but defining the separator configuration as semicolon then it should return an empty list`() {
         val processor = CommonCSVTransactionProcessor(
             file = File("src/test/resources/files/csv/c6_comma.csv"),
-            preferences = ProcessorPreferences(csvSeparator = ';')
+            preferences = ProcessorConfiguration(csvSeparator = ';')
         )
 
         val result = processor.processFile()

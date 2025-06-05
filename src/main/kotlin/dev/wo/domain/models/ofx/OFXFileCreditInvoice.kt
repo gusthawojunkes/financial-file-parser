@@ -4,7 +4,7 @@ import javax.xml.bind.annotation.XmlElement
 import javax.xml.bind.annotation.XmlRootElement
 
 @XmlRootElement(name = "OFX")
-class OFXFile {
+class OFXFileCreditInvoice {
     @XmlElement(name = "OFXHEADER")
     private var header: String? = null
 
