@@ -1,16 +1,16 @@
 package dev.wo.infrastructure.adapters
 
+import dev.wo.domain.enums.InvoiceType
 import dev.wo.domain.exceptions.HttpException
-import dev.wo.domain.services.ProcessorPreferences
+import dev.wo.domain.services.ProcessorConfiguration
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
-import io.ktor.server.response.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 
-public suspend fun ApplicationCall.getTempFile(): File {
+suspend fun ApplicationCall.getTempFile(): File {
     return withContext(Dispatchers.IO) {
         val tempFile = File.createTempFile("upload_${System.currentTimeMillis()}", ".tmp")
         receiveStream().use { input ->
@@ -22,15 +22,16 @@ public suspend fun ApplicationCall.getTempFile(): File {
     }
 }
 
-public suspend fun ApplicationCall.getRequiredHeader(headerName: String): String {
+fun ApplicationCall.getRequiredHeader(headerName: String): String {
     return request.headers[headerName] ?: run {
         throw HttpException(HttpStatusCode.BadRequest, "$headerName header is required")
     }
 }
 
-public suspend fun ApplicationCall.getPreferences(): ProcessorPreferences {
+fun ApplicationCall.getPreferences(): ProcessorConfiguration {
     val separator: Char = request.headers["CSV-Separator"]?.firstOrNull() ?: ','
     val dateTimePattern: String = request.headers["DateTime-Pattern"]?: "dd/MM/yyyy HH:mm:ss"
+    val invoiceType = InvoiceType.fromString(this.getRequiredHeader("Invoice-Type"))
 
-    return ProcessorPreferences(separator, dateTimePattern)
+    return ProcessorConfiguration(separator, dateTimePattern, invoiceType)
 }

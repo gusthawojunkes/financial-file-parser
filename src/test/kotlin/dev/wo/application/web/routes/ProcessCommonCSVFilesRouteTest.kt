@@ -26,6 +26,7 @@ class ProcessCommonCSVFilesRouteTest {
                 append("Institution", "Any")
                 append("File-Type", "CSV")
                 append("CSV-Separator", ",")
+                append("Invoice-Type", "CREDIT_INVOICE")
             }
             setBody(fileBytes)
         }
@@ -51,6 +52,7 @@ class ProcessCommonCSVFilesRouteTest {
                 append("Institution", "Any")
                 append("File-Type", "CSV")
                 append("CSV-Separator", ";")
+                append("Invoice-Type", "CREDIT_INVOICE")
             }
             setBody(fileBytes)
         }

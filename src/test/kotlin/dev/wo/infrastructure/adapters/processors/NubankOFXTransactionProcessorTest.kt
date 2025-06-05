@@ -1,18 +1,13 @@
 package dev.wo.infrastructure.adapters.processors
 
-import dev.wo.domain.exceptions.FileProcessingException
-import dev.wo.domain.models.ofx.OFXFile
+import dev.wo.domain.enums.InvoiceType
+import dev.wo.domain.models.ofx.OFXFileCreditInvoice
 import dev.wo.domain.models.ofx.StmtTrn
-import dev.wo.infrastructure.adapters.FileService
+import dev.wo.domain.services.ProcessorConfiguration
 import io.ktor.http.*
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verify
-import org.junit.Assert.assertThrows
-import java.io.BufferedReader
 import java.io.File
-import java.io.FileReader
-import java.io.IOException
 import kotlin.test.*
 
 class NubankOFXTransactionProcessorTest {
@@ -31,7 +26,8 @@ class NubankOFXTransactionProcessorTest {
     @Test
     fun `when processFile is called with a non empty file then it should return a list of transactions`() {
         val processor = NubankOFXTransactionProcessor(
-            file = File("src/test/resources/files/ofx/nubank.ofx")
+            file = File("src/test/resources/files/ofx/nubank.ofx"),
+            preferences = ProcessorConfiguration(',', "dd/MM/yyyy HH:mm:ss", InvoiceType.CREDIT_INVOICE)
         )
 
         val result = processor.processFile()
@@ -42,7 +38,8 @@ class NubankOFXTransactionProcessorTest {
     @Test
     fun `when processFile is called with a empty file then it should return a empty list`() {
         val processor = NubankOFXTransactionProcessor(
-            file = File("src/test/resources/files/ofx/empty.ofx")
+            file = File("src/test/resources/files/ofx/empty.ofx"),
+           preferences = ProcessorConfiguration(',', "dd/MM/yyyy HH:mm:ss", InvoiceType.CREDIT_INVOICE)
         )
 
         val result = processor.processFile()
@@ -55,7 +52,7 @@ class NubankOFXTransactionProcessorTest {
     fun `when createFinancialTransactions is called with a OFXFile then it should return a list of FinancialTransaction`() {
         val processor = NubankOFXTransactionProcessor()
 
-        val ofxFile = mockk<OFXFile>()
+        val ofxFile = mockk<OFXFileCreditInvoice>()
         val stmtTrn = mockk<StmtTrn>()
 
         every { stmtTrn.getTrnAmt() } returns "10.0"
