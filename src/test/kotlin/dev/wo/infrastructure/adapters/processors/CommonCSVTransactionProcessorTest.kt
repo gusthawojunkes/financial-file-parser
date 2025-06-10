@@ -14,7 +14,7 @@ class CommonCSVTransactionProcessorTest {
         val result = processor.processFile()
 
         assertNotNull(result.data)
-        assertTrue(result.data!!.isNotEmpty())
+        assertTrue(result.data.isNotEmpty())
     }
 
     @Test
@@ -27,7 +27,7 @@ class CommonCSVTransactionProcessorTest {
         val result = processor.processFile()
 
         assertNotNull(result.data)
-        assertTrue(result.data!!.isNotEmpty())
+        assertTrue(result.data.isNotEmpty())
     }
 
     @Test
@@ -40,7 +40,7 @@ class CommonCSVTransactionProcessorTest {
         val result = processor.processFile()
 
         assertNotNull(result.data)
-        assertTrue(result.data!!.isNotEmpty())
+        assertTrue(result.data.isNotEmpty())
     }
 
     @Test
@@ -52,7 +52,7 @@ class CommonCSVTransactionProcessorTest {
         val result = processor.processFile()
 
         assertNotNull(result.data)
-        assertTrue(result.data!!.isEmpty())
+        assertTrue(result.data.isEmpty())
     }
 
     @Test
@@ -65,7 +65,7 @@ class CommonCSVTransactionProcessorTest {
         val result = processor.processFile()
 
         assertNotNull(result.data)
-        assertTrue(result.data!!.isEmpty())
+        assertTrue(result.data.isEmpty())
     }
 
 }

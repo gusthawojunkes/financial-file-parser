@@ -10,20 +10,50 @@ class FileDataHelperTest {
 
     @Test
     fun `should return LocalDateTime when date is valid`() {
+        val date = FileDataHelper.getDateTime("20210101000000")
+        assertEquals(LocalDateTime.of(2021, 1, 1, 0, 0, 0), date)
+    }
+
+    @Test
+    fun `getDateTime should return null when date is null`() {
+        val date = FileDataHelper.getDateTime(null)
+        assertNull(date)
+    }
+
+    @Test
+    fun `getDateTime should return null when date is invalid`() {
+        val date = FileDataHelper.getDateTime("20210101")
+        assertNull(date)
+    }
+
+    @Test
+    fun `should return LocalDateTime at start of day when date is valid`() {
         val date = FileDataHelper.getDate("20210101000000")
         assertEquals(LocalDateTime.of(2021, 1, 1, 0, 0, 0), date)
     }
 
     @Test
-    fun `should return null when date is null`() {
+    fun `getDate should return null when date is null`() {
         val date = FileDataHelper.getDate(null)
         assertNull(date)
     }
 
     @Test
-    fun `should return null when date is invalid`() {
+    fun `getDate should return null when date is invalid`() {
         val date = FileDataHelper.getDate("20210101")
         assertNull(date)
+    }
+
+    @Test
+    fun `should return null when date contains invalid characters`() {
+        val date = FileDataHelper.getDate("2021-01-01")
+        assertNull(date)
+    }
+
+    @Test
+    fun `should ignore timezone information in date`() {
+        val date = FileDataHelper.getDate("20210101000000[UTC]")
+        assertEquals(LocalDateTime.of(2021, 1, 1, 0, 0, 0), date)
     }
 
     @Test
