@@ -13,7 +13,8 @@ data class FinancialTransaction(
     val institutionUUID: String? = null,
     val transactionType: TransactionType,
     val institution: FinancialInstitution,
-    val cardType: CardType? = null
+    val cardType: CardType? = null,
+    val currency: String = "BRL"
 ) {
     fun getFormattedTransactionTime(): String {
         val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")

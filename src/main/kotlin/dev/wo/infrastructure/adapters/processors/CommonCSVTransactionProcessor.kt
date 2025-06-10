@@ -10,7 +10,7 @@ import dev.wo.domain.transactions.FinancialTransaction
 import dev.wo.infrastructure.helpers.FileDataHelper
 import java.io.File
 
-class CommonCSVTransactionProcessor(
+open class CommonCSVTransactionProcessor(
     override var file: File? = null,
     override var preferences: ProcessorConfiguration? = null
 ) : TransactionProcessor {
@@ -38,7 +38,7 @@ class CommonCSVTransactionProcessor(
         for (row: Map<String, String> in data) {
             val value = row["value"]?.toDouble() ?: continue
             val description = row["description"] ?: ""
-            val transactionTime = FileDataHelper.getDate(row["transactionTime"], dateTimePattern) ?: continue
+            val transactionTime = FileDataHelper.getDateTime(row["transactionTime"], dateTimePattern) ?: continue
             val institutionUUID = row["institutionUUID"] ?: FileDataHelper.generateUUID()
             val transactionType = FileDataHelper.getTransactionType(row["transactionType"])
             val institution = FinancialInstitution.fromString(row["institution"] ?: "")

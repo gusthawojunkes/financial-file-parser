@@ -1,17 +1,31 @@
 package dev.wo.infrastructure.helpers
 
 import dev.wo.domain.enums.TransactionType
+import java.sql.Date
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
 object FileDataHelper {
-    fun getDate(date: String?, pattern: String = "yyyyMMddHHmmss"): LocalDateTime? {
+    fun getDateTime(date: String?, pattern: String = "yyyyMMddHHmmss"): LocalDateTime? {
         date ?: return null
         val inputWithoutTimeZone = date.replace("\\[.*\\]".toRegex(), "")
         val formatter = DateTimeFormatter.ofPattern(pattern)
         return try {
             LocalDateTime.parse(inputWithoutTimeZone, formatter)
+        } catch (e: DateTimeParseException) {
+            null
+        }
+    }
+
+    fun getDate(date: String?, pattern: String = "yyyyMMddHHmmss"): LocalDateTime? {
+        date ?: return null
+        val inputWithoutTimeZone = date.replace("\\[.*\\]".toRegex(), "")
+        val formatter = DateTimeFormatter.ofPattern(pattern)
+        return try {
+            val localDate = LocalDate.parse(inputWithoutTimeZone, formatter)
+            localDate.atStartOfDay()
         } catch (e: DateTimeParseException) {
             null
         }

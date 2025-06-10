@@ -55,7 +55,7 @@ class NubankOFXTransactionProcessor(
         for (ofxTransaction in transactionsFromFile) {
             val value = ofxTransaction.getTrnAmt()?.toDouble() ?: continue
             val description = ofxTransaction.getMemo() ?: ""
-            val transactionTime = FileDataHelper.getDate(ofxTransaction.getDtPosted())?: continue
+            val transactionTime = FileDataHelper.getDateTime(ofxTransaction.getDtPosted())?: continue
             val institutionUUID = ofxTransaction.getFitId()?: continue
             val transactionType = FileDataHelper.getTransactionType(ofxTransaction.getTrnType())
 

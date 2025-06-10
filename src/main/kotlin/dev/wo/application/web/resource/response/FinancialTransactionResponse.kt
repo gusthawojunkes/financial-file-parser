@@ -12,7 +12,8 @@ data class FinancialTransactionResponse(
     val institutionUUID: String? = null,
     val transactionType: TransactionType,
     val institution: FinancialInstitution,
-    val cardType: CardType? = null
+    val cardType: CardType? = null,
+    val currency: String = "BRL"
 ) {
     companion object {
         fun from(financialTransaction: FinancialTransaction): FinancialTransactionResponse {
@@ -23,7 +24,8 @@ data class FinancialTransactionResponse(
                 institutionUUID = financialTransaction.institutionUUID,
                 transactionType = financialTransaction.transactionType,
                 institution = financialTransaction.institution,
-                cardType = financialTransaction.cardType
+                cardType = financialTransaction.cardType,
+                currency = financialTransaction.currency
             )
         }
     }
