@@ -1,0 +1,4 @@
+"TransferWise ID",Date,Amount,Currency,Description,"Payment Reference","Running Balance","Exchange From","Exchange To","Exchange Rate","Payer Name","Payee Name","Payee Account Number",Merchant,"Card Last Four Digits","Card Holder Full Name",Attachment,Note,"Total fees","Exchange To Amount"
+TRANSFER-1340200179,17-12-2024,1000.00,CAD,"Topped up balance",,2504.70,BRL,CAD,0.23515,,,,,,,,,0.00,1000.00
+BALANCE-2815235225,07-12-2024,4.70,CAD,"Converted 20.56 BRL from BRL balance to 4.70 CAD",,1504.70,BRL,CAD,0.23261,,,,,,,,,0.00,4.70
+TRANSFER-1182772479,15-08-2024,1500.00,CAD,"Topped up balance",,1500.00,BRL,CAD,0.25051,,,,,,,,,0.00,1500.00

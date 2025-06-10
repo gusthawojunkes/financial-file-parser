@@ -4,6 +4,7 @@ import dev.wo.domain.enums.FinancialInstitution
 import dev.wo.domain.exceptions.FileProcessingException
 import dev.wo.infrastructure.adapters.processors.CommonCSVTransactionProcessor
 import dev.wo.infrastructure.adapters.processors.NubankOFXTransactionProcessor
+import dev.wo.infrastructure.adapters.processors.WiseCSVTransactionProcessor
 import org.junit.Assert.assertThrows
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -25,6 +26,21 @@ class TransactionProcessorFactoryTest {
         }
 
         assertEquals("Invalid file type for Nubank", exception.message)
+    }
+
+    @Test
+    fun `should return WiseCSVTransactionProcessor when institution is Wise and file type is CSV`() {
+        val processor = TransactionProcessorFactory.getProcessor(FinancialInstitution.WISE, "CSV")
+        assertTrue(processor is WiseCSVTransactionProcessor)
+    }
+
+    @Test
+    fun `should throw FileProcessingException when institution is Wise and file type is unkown`() {
+        val exception = assertThrows(FileProcessingException::class.java) {
+            TransactionProcessorFactory.getProcessor(FinancialInstitution.WISE, "xyz")
+        }
+
+        assertEquals("Invalid file type for Wise", exception.message)
     }
 
     @Test
