@@ -2,8 +2,9 @@ package dev.wo.infrastructure.factories
 
 import dev.wo.domain.enums.FinancialInstitution
 import dev.wo.domain.exceptions.FileProcessingException
+import dev.wo.infrastructure.adapters.processors.C6OFXTransactionProcessor
 import dev.wo.infrastructure.adapters.processors.CommonCSVTransactionProcessor
-import dev.wo.infrastructure.adapters.processors.NubankOFXTransactionProcessor
+import dev.wo.infrastructure.adapters.processors.CommonOFXTransactionProcessor
 import dev.wo.infrastructure.adapters.processors.WiseCSVTransactionProcessor
 import org.junit.Assert.assertThrows
 import kotlin.test.Test
@@ -13,9 +14,9 @@ import kotlin.test.assertTrue
 class TransactionProcessorFactoryTest {
 
     @Test
-    fun `should return NubankOFXTransactionProcessor when institution is Nubank and file type is OFX`() {
+    fun `should return CommonOFXTransactionProcessor when institution is Nubank and file type is OFX`() {
         val processor = TransactionProcessorFactory.getProcessor(FinancialInstitution.NUBANK, "OFX")
-        assertTrue(processor is NubankOFXTransactionProcessor)
+        assertTrue(processor is CommonOFXTransactionProcessor)
     }
 
     @Test
@@ -65,6 +66,21 @@ class TransactionProcessorFactoryTest {
         }
 
         assertEquals("Invalid file type for Any", exception.message)
+    }
+
+    @Test
+    fun `should return C6OFXTransactionProcessor when institution is C6 and file type is OFX`() {
+        val processor = TransactionProcessorFactory.getProcessor(FinancialInstitution.C6_BANK, "OFX")
+        assertTrue(processor is C6OFXTransactionProcessor)
+    }
+
+    @Test
+    fun `should throw FileProcessingException when institution is C6 and file type is unkown`() {
+        val exception = assertThrows(FileProcessingException::class.java) {
+            TransactionProcessorFactory.getProcessor(FinancialInstitution.C6_BANK, "???")
+        }
+
+        assertEquals("Invalid file type for C6 Bank", exception.message)
     }
 
 }
