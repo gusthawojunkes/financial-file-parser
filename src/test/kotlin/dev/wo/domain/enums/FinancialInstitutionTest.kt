@@ -19,7 +19,7 @@ class FinancialInstitutionTest {
 
         @Test
         fun `should return C6 Bank when description is C6 Bank`() {
-            val financialInstitution = FinancialInstitution.fromString("C6 Bank")
+            val financialInstitution = FinancialInstitution.fromString("C6_Bank")
             assertEquals(FinancialInstitution.C6_BANK, financialInstitution)
         }
 
