@@ -64,7 +64,7 @@ class ProcessCommonCSVFilesRouteTest {
         assertNotNull(firstTransaction)
         assertNotNull(firstTransaction.value)
         assertTrue(transactions.isNotEmpty())
-        assertTrue(firstTransaction.value.toDouble() != 0.0)
+        assertTrue(firstTransaction.value != 0.0)
         assertEquals(FinancialInstitution.C6_BANK, firstTransaction.institution)
         assertEquals(TransactionType.DEBIT, firstTransaction.transactionType)
         assertEquals(CardType.CREDIT, firstTransaction.cardType)
