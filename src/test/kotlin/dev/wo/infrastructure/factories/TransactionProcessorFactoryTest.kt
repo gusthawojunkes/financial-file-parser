@@ -2,6 +2,7 @@ package dev.wo.infrastructure.factories
 
 import dev.wo.domain.enums.FinancialInstitution
 import dev.wo.domain.exceptions.FileProcessingException
+import dev.wo.infrastructure.adapters.processors.BradescoCSVTransactionProcessor
 import dev.wo.infrastructure.adapters.processors.C6OFXTransactionProcessor
 import dev.wo.infrastructure.adapters.processors.CommonCSVTransactionProcessor
 import dev.wo.infrastructure.adapters.processors.CommonOFXTransactionProcessor
@@ -81,6 +82,21 @@ class TransactionProcessorFactoryTest {
         }
 
         assertEquals("Invalid file type for C6 Bank", exception.message)
+    }
+
+    @Test
+    fun `should return BradescoCSVTransactionProcessor when institution is C6 and file type is CSV`() {
+        val processor = TransactionProcessorFactory.getProcessor(FinancialInstitution.BRADESCO, "CSV")
+        assertTrue(processor is BradescoCSVTransactionProcessor)
+    }
+
+    @Test
+    fun `should throw FileProcessingException when institution is Bradesco and file type is unkown`() {
+        val exception = assertThrows(FileProcessingException::class.java) {
+            TransactionProcessorFactory.getProcessor(FinancialInstitution.BRADESCO, "???")
+        }
+
+        assertEquals("Invalid file type for Bradesco", exception.message)
     }
 
 }

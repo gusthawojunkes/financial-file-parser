@@ -3,11 +3,13 @@ package dev.wo.infrastructure.factories
 import dev.wo.domain.enums.FinancialInstitution
 import dev.wo.domain.exceptions.FileProcessingException
 import dev.wo.domain.services.TransactionProcessor
+import dev.wo.infrastructure.adapters.processors.BradescoCSVTransactionProcessor
 import dev.wo.infrastructure.adapters.processors.C6OFXTransactionProcessor
 import dev.wo.infrastructure.adapters.processors.CommonCSVTransactionProcessor
 import dev.wo.infrastructure.adapters.processors.CommonOFXTransactionProcessor
 import dev.wo.infrastructure.adapters.processors.NubankOFXTransactionProcessor
 import dev.wo.infrastructure.adapters.processors.WiseCSVTransactionProcessor
+import kotlinx.serialization.builtins.FloatArraySerializer
 
 object TransactionProcessorFactory {
     fun getProcessor(institution: FinancialInstitution, fileType: String): TransactionProcessor {
@@ -25,6 +27,10 @@ object TransactionProcessorFactory {
             FinancialInstitution.C6_BANK -> when(processorFileType) {
                 "ofx" -> C6OFXTransactionProcessor()
                 else -> throw FileProcessingException("Invalid file type for C6 Bank")
+            }
+            FinancialInstitution.BRADESCO -> when(processorFileType) {
+                "csv" -> BradescoCSVTransactionProcessor()
+                else -> throw FileProcessingException("Invalid file type for Bradesco")
             }
             FinancialInstitution.ANY -> when (processorFileType) {
                 "csv" -> CommonCSVTransactionProcessor()
