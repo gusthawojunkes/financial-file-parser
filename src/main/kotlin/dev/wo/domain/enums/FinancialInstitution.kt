@@ -5,6 +5,7 @@ enum class FinancialInstitution (val description: String) {
     NUBANK("Nubank"),
     ITAU("Itaú"),
     C6_BANK("C6_Bank"),
+    BRADESCO("Bradesco"),
     WISE("Wise"),
     ANY("Any"),
     UNKNOWN("Desconhecida");
