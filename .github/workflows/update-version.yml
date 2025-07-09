@@ -42,7 +42,7 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT_TOKEN }}
           commit-message: "chore: Update version to ${{ steps.get_version.outputs.VERSION }} from release"
           branch: "feature/update-version-${{ steps.get_version.outputs.VERSION }}"
           delete-branch: true
