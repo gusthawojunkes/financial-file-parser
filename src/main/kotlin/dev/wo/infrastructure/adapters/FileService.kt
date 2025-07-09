@@ -11,7 +11,7 @@ import javax.xml.bind.ValidationEventHandler
 object FileService {
     fun validateFileType(expectedType: String): Boolean {
         val availableFileTypes = avaliableFileTypes()
-        return availableFileTypes.contains(expectedType)
+        return availableFileTypes.contains(expectedType.uppercase())
     }
 
     fun avaliableFileTypes(): List<String> = listOf("OFX", "CSV")
