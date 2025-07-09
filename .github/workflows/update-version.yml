@@ -21,6 +21,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ github.event_name == 'release' && 'main' || github.ref }}
 
       - name: Determine version
         id: get_version
@@ -48,6 +49,7 @@ jobs:
           delete-branch: true
           title: "chore: Update application version to ${{ steps.get_version.outputs.VERSION }}"
           body: "This PR updates the application version in `build.gradle.kts` to `${{ steps.get_version.outputs.VERSION }}` based on a new release or manual trigger."
+          base: master
           labels: |
             automation
             dependencies
