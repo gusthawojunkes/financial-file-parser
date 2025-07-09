@@ -13,6 +13,8 @@ on:
 jobs:
   update-gradle-version:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # Adiciona permissão de escrita para o GITHUB_TOKEN
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -35,7 +37,6 @@ jobs:
           NEW_VERSION="${NEW_VERSION#v}"
           echo "Updating version to: $NEW_VERSION"
           sed -i "s/^version = \".*\"/version = \"$NEW_VERSION\"/" build.gradle.kts
-
 
       - name: Commit and push changes
         run: |
