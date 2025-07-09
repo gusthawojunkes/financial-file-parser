@@ -1,19 +1,25 @@
-FROM amazoncorretto:21
+FROM amazoncorretto:21 AS builder
 
-WORKDIR /api
+WORKDIR /home/gradle
+
+COPY build.gradle.kts settings.gradle.kts gradle.properties ./
+COPY gradle ./gradle
 
 COPY gradlew .
-COPY gradle gradle
-COPY src src
-COPY settings.gradle.kts .
-COPY build.gradle.kts .
-COPY gradle.properties .
-COPY src/test/resources/files .
+RUN chmod +x ./gradlew
 
-RUN chmod +x gradlew
+RUN ./gradlew build --no-daemon
 
-RUN ./gradlew build
+COPY src ./src
 
-EXPOSE ${PORT}:8080
+RUN ./gradlew build --no-daemon
 
-CMD ["./gradlew", "run"]
+FROM amazoncorretto:21
+
+WORKDIR /app
+
+COPY --from=builder /home/gradle/build/libs/*.jar ./application.jar
+
+EXPOSE 8080
+
+CMD ["java", "-jar", "application.jar"]
