@@ -52,4 +52,3 @@ jobs:
             automation
             dependencies
           assignees: ${{ github.actor }}
-          reviewers: ${{ github.actor }}
