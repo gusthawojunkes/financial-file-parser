@@ -6,6 +6,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
+import java.util.UUID
 
 object FileDataHelper {
     fun getDateTime(date: String?, pattern: String = "yyyyMMddHHmmss"): LocalDateTime? {
@@ -44,6 +45,6 @@ object FileDataHelper {
     }
 
     fun generateUUID(): String {
-        return java.util.UUID.randomUUID().toString()
+        return UUID.randomUUID().toString()
     }
 }
