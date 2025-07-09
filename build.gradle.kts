@@ -17,7 +17,7 @@ java {
 }
 
 group = "dev.wo"
-version = "0.4.0"
+version = "0.0.4"
 
 application {
     mainClass.set("io.ktor.server.netty.EngineMain")
