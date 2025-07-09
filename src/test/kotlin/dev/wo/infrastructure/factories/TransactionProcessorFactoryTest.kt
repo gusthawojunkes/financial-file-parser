@@ -3,6 +3,7 @@ package dev.wo.infrastructure.factories
 import dev.wo.domain.enums.FinancialInstitution
 import dev.wo.domain.exceptions.FileProcessingException
 import dev.wo.infrastructure.adapters.processors.BradescoCSVTransactionProcessor
+import dev.wo.infrastructure.adapters.processors.C6CSVTransactionProcessor
 import dev.wo.infrastructure.adapters.processors.C6OFXTransactionProcessor
 import dev.wo.infrastructure.adapters.processors.CommonCSVTransactionProcessor
 import dev.wo.infrastructure.adapters.processors.CommonOFXTransactionProcessor
@@ -76,6 +77,12 @@ class TransactionProcessorFactoryTest {
     }
 
     @Test
+    fun `should return C6CSVTransactionProcessor when institution is C6 and file type is CSV`() {
+        val processor = TransactionProcessorFactory.getProcessor(FinancialInstitution.C6_BANK, "CSV")
+        assertTrue(processor is C6CSVTransactionProcessor)
+    }
+
+    @Test
     fun `should throw FileProcessingException when institution is C6 and file type is unkown`() {
         val exception = assertThrows(FileProcessingException::class.java) {
             TransactionProcessorFactory.getProcessor(FinancialInstitution.C6_BANK, "???")
@@ -85,7 +92,7 @@ class TransactionProcessorFactoryTest {
     }
 
     @Test
-    fun `should return BradescoCSVTransactionProcessor when institution is C6 and file type is CSV`() {
+    fun `should return BradescoCSVTransactionProcessor when institution is Bradesco and file type is CSV`() {
         val processor = TransactionProcessorFactory.getProcessor(FinancialInstitution.BRADESCO, "CSV")
         assertTrue(processor is BradescoCSVTransactionProcessor)
     }
