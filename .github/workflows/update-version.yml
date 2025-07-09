@@ -6,20 +6,21 @@ on:
   workflow_dispatch:
     inputs:
       version_tag:
-        description: 'Version tag (e.g., v1.0.0)'
+        description: 'Version tag (e.g., 1.0.0)'
         required: true
-        default: 'v0.0.0'
+        default: '0.0.0'
 
 jobs:
   update-gradle-version:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Adiciona permissão de escrita para o GITHUB_TOKEN
+      contents: write
+      pull-requests: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Required to push changes
+          fetch-depth: 0
 
       - name: Determine version
         id: get_version
@@ -38,12 +39,17 @@ jobs:
           echo "Updating version to: $NEW_VERSION"
           sed -i "s/^version = \".*\"/version = \"$NEW_VERSION\"/" build.gradle.kts
 
-      - name: Commit and push changes
-        run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git add build.gradle.kts
-          git commit -m "chore: Update version to $NEW_VERSION from release" || echo "No changes to commit"
-          git push
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: Update version to ${{ steps.get_version.outputs.VERSION }} from release"
+          branch: "feature/update-version-${{ steps.get_version.outputs.VERSION }}"
+          delete-branch: true
+          title: "chore: Update application version to ${{ steps.get_version.outputs.VERSION }}"
+          body: "This PR updates the application version in `build.gradle.kts` to `${{ steps.get_version.outputs.VERSION }}` based on a new release or manual trigger."
+          labels: |
+            automation
+            dependencies
+          assignees: ${{ github.actor }}
+          reviewers: ${{ github.actor }}
