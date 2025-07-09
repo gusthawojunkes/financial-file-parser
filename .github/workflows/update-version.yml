@@ -1,0 +1,48 @@
+name: Update Version on Release
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version_tag:
+        description: 'Version tag (e.g., v1.0.0)'
+        required: true
+        default: 'v0.0.0'
+
+jobs:
+  update-gradle-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Required to push changes
+
+      - name: Determine version
+        id: get_version
+        run: |
+          if [[ "${{ github.event_name }}" == "release" ]]; then
+            echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          else
+            echo "VERSION=${{ github.event.inputs.version_tag }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update version in build.gradle.kts
+        run: |
+          NEW_VERSION="${{ steps.get_version.outputs.VERSION }}"
+          # Remove 'v' prefix if present (e.g., v1.0.0 -> 1.0.0)
+          NEW_VERSION="${NEW_VERSION#v}"
+          echo "Updating version to: $NEW_VERSION"
+          sed -i "s/^version = \".*\"/version = \"$NEW_VERSION\"/" build.gradle.kts
+
+
+      - name: Commit and push changes
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add build.gradle.kts
+          git commit -m "chore: Update version to $NEW_VERSION from release" || echo "No changes to commit"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
