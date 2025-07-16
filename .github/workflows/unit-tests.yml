@@ -1,4 +1,4 @@
-name: "[CI] Continuous Integration"
+name: "[CI] Unit tests"
 
 on:
   pull_request:
@@ -9,6 +9,7 @@ on:
 
 jobs:
   test:
+    name: "Testing the application"
     runs-on: ubuntu-latest
 
     steps:
