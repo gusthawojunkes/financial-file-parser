@@ -63,3 +63,7 @@ dependencies {
 tasks.register("stage") {
     dependsOn("build")
 }
+
+tasks.named("sonar").configure {
+    dependsOn("jacocoTestReport")
+}
