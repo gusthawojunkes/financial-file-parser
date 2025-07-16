@@ -8,8 +8,8 @@ plugins {
     kotlin("jvm") version "2.0.0"
     id("io.ktor.plugin") version "2.3.12"
     id("org.jetbrains.kotlin.plugin.serialization") version "2.0.0"
-    id("jacoco")
     id("org.sonarqube") version "6.2.0.5505"
+    id("jacoco")
 }
 
 java {
@@ -64,6 +64,17 @@ dependencies {
 tasks.register("stage") {
     dependsOn("build")
 }
+
+tasks.named("sonar") {
+    dependsOn("jacocoTestReport")
+}
+
+tasks.named<JacocoReport>("jacocoTestReport") {
+    reports {
+        xml.required = true
+    }
+}
+
 
 tasks.named("sonar").configure {
     dependsOn("jacocoTestReport")
