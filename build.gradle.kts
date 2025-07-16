@@ -24,6 +24,7 @@ sonar {
         property("sonar.organization", "gusthawojunkes")
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.coverage.jacoco.xmlReportPath", "${layout.buildDirectory.get()}/reports/jacoco/test/jacocoTestReport.xml")
+        property("sonar.exclusions", "src/main/kotlin/dev/wo/domain/models/ofx/**")
     }
 }
 
