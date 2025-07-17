@@ -1,6 +1,5 @@
 package dev.wo.infrastructure.adapters.processors
 
-import dev.wo.domain.common.ProcessingResult
 import dev.wo.domain.enums.CardType
 import dev.wo.domain.enums.FinancialInstitution
 import dev.wo.domain.enums.InvoiceType

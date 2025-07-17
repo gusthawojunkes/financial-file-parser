@@ -31,7 +31,7 @@ class BradescoCSVTransactionProcessor(
 
     override fun <T> createFinancialTransactions(data: T): MutableList<FinancialTransaction> {
         val transactions = mutableListOf<FinancialTransaction>()
-        val dateTimePattern = preferences?.dateTimePattern ?: "dd-MM-yyyy"
+        val dateTimePattern = preferences?.dateTimePattern ?: "dd/MM/yyyy"
         val delimiter = preferences?.csvSeparator ?: ';'
         val lines = data as ArrayList<String>
 
@@ -40,13 +40,13 @@ class BradescoCSVTransactionProcessor(
                 break
             }
             val properties = row.split(delimiter)
-            val transactionTime = properties[0] ?: continue
+            val transactionTime = properties[0]
 
-            val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+            val formatter = DateTimeFormatter.ofPattern(dateTimePattern)
             val localDate = LocalDate.parse(transactionTime, formatter)
             val localDateTime = LocalDateTime.of(localDate, java.time.LocalTime.MIDNIGHT)
             val description = properties[1]
-            if ("SALDO ANTERIOR".equals(description)) {
+            if ("SALDO ANTERIOR" == description) {
                 continue
             }
             val institutionUUID = properties[2]

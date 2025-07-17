@@ -16,15 +16,15 @@ object FileService {
 
     fun avaliableFileTypes(): List<String> = listOf("OFX", "CSV")
 
-    fun <T> unmarshalFile(file: File, type: Class<T>): T? {
+    fun unmarshalFile(file: File, type: Class<*>): Any? {
         return try {
             val context: JAXBContext = JAXBContext.newInstance(type)
             val unmarshaller = context.createUnmarshaller()
             unmarshaller.eventHandler = ValidationEventHandler { event ->
                 println("Evento de validação: ${event.message}")
-                true // Retorna true para continuar o unmarshalling
+                true
             }
-            unmarshaller.unmarshal(file) as T?
+            unmarshaller.unmarshal(file)
         } catch (e: Exception) {
             e.printStackTrace()
             null
