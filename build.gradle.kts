@@ -1,8 +1,14 @@
 
-val kotlin_version: String by project
-val logback_version: String by project
-val ktor_version: String by project
-val mockk_version: String by project
+val kotlinVersion: String by project
+val logbackVersion: String by project
+val ktorVersion: String by project
+val mockkVersion: String by project
+val jaxbApiVersion: String by project
+val jaxbRuntimeVersion: String by project
+val gsonVersion: String by project
+val apacheCommonsLangVersion: String by project
+val apacheCommonsCollectionsVersion: String by project
+val kotlinCsvVersion: String by project
 
 plugins {
     kotlin("jvm") version "2.0.0"
@@ -43,26 +49,28 @@ repositories {
 }
 
 dependencies {
-    implementation("io.ktor:ktor-server-content-negotiation:$ktor_version")
+    implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-server-core-jvm")
-    implementation("io.ktor:ktor-serialization-gson:$ktor_version")
-    implementation("io.ktor:ktor-server-swagger:$ktor_version")
+    implementation("io.ktor:ktor-serialization-gson:$ktorVersion")
+    implementation("io.ktor:ktor-server-swagger:$ktorVersion")
     implementation("io.ktor:ktor-server-netty-jvm")
     implementation("io.ktor:ktor-server-config-yaml")
-    implementation("ch.qos.logback:logback-classic:$logback_version")
-    implementation("javax.xml.bind:jaxb-api:2.2.4")
-    implementation("org.glassfish.jaxb:jaxb-runtime:2.3.3")
-    implementation("com.google.code.gson:gson:2.10.1")
-    implementation("org.apache.commons:commons-lang3:3.14.0")
-    implementation("org.apache.commons:commons-collections4:4.4")
-    implementation("com.jsoizo:kotlin-csv-jvm:1.10.0")
-    implementation("io.ktor:ktor-server-cors:${ktor_version}")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
-    testImplementation("io.ktor:ktor-server-test-host:$ktor_version")
-    testImplementation("io.mockk:mockk:${mockk_version}")
+    implementation("ch.qos.logback:logback-classic:$logbackVersion")
+    implementation("javax.xml.bind:jaxb-api:$jaxbApiVersion")
+    implementation("org.glassfish.jaxb:jaxb-runtime:$jaxbRuntimeVersion")
+    implementation("com.google.code.gson:gson:$gsonVersion")
+    implementation("org.apache.commons:commons-lang3:$apacheCommonsLangVersion")
+    implementation("org.apache.commons:commons-collections4:$apacheCommonsCollectionsVersion")
+    implementation("com.jsoizo:kotlin-csv-jvm:$kotlinCsvVersion")
+    implementation("io.ktor:ktor-server-cors:$ktorVersion")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
+    testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
+    testImplementation("io.mockk:mockk:$mockkVersion")
 }
 
 tasks.register("stage") {
+    description = "Assembles the application and prepares it for deployment."
+    group = "FIX"
     dependsOn("build")
 }
 

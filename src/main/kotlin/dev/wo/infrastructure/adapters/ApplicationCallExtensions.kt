@@ -6,12 +6,13 @@ import dev.wo.domain.services.ProcessorConfiguration
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 
-suspend fun ApplicationCall.getTempFile(): File {
-    return withContext(Dispatchers.IO) {
+suspend fun ApplicationCall.getTempFile(dispatcher: CoroutineDispatcher = Dispatchers.IO): File {
+    return withContext(dispatcher) {
         val tempFile = File.createTempFile("upload_${System.currentTimeMillis()}", ".tmp")
         receiveStream().use { input ->
             tempFile.outputStream().use { output ->
