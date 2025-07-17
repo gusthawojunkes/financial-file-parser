@@ -10,7 +10,6 @@ import dev.wo.infrastructure.adapters.processors.CommonCSVTransactionProcessor
 import dev.wo.infrastructure.adapters.processors.CommonOFXTransactionProcessor
 import dev.wo.infrastructure.adapters.processors.NubankOFXTransactionProcessor
 import dev.wo.infrastructure.adapters.processors.WiseCSVTransactionProcessor
-import kotlinx.serialization.builtins.FloatArraySerializer
 
 object TransactionProcessorFactory {
     fun getProcessor(institution: FinancialInstitution, fileType: String): TransactionProcessor {

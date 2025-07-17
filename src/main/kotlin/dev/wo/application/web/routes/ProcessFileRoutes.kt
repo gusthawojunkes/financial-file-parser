@@ -2,7 +2,6 @@ package dev.wo.application.web.routes
 
 import dev.wo.application.web.resource.response.FinancialTransactionResponse
 import dev.wo.domain.enums.FinancialInstitution
-import dev.wo.domain.enums.InvoiceType
 import dev.wo.domain.exceptions.HttpException
 import dev.wo.infrastructure.adapters.FileService
 import dev.wo.infrastructure.adapters.getPreferences

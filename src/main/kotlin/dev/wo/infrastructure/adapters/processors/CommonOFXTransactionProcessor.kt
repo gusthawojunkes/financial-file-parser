@@ -33,7 +33,12 @@ open class CommonOFXTransactionProcessor(
             val parsedFile: Any? = getParsedFile(xmlFile)
 
             parsedFile?.let {
-                return ProcessingResult.success(createFinancialTransactions(it))
+                val transactions = when (it) {
+                    is OFXFileCreditInvoice -> createFinancialTransactions(it)
+                    is OFXFileAccountStatement -> createFinancialTransactions(it)
+                    else -> throw FileProcessingException("Unsupported file type")
+                }
+                return ProcessingResult.success(transactions)
             }
 
             xmlFile?.delete()
@@ -86,10 +91,10 @@ open class CommonOFXTransactionProcessor(
         return data.getCreditCardMsgsRsV1()?.getCcStmtTrnRs()?.getCcStmtRs()?.getBankTranList()?.getStmtTrnList().orEmpty()
     }
 
-    fun <T> getParsedFile(xmlFile: File?): T? {
+    fun getParsedFile(xmlFile: File?): Any? {
         val parsedFile = when (this.preferences?.invoiceType) {
-            InvoiceType.CREDIT_INVOICE -> xmlFile?.let { FileService.unmarshalFile(it, OFXFileCreditInvoice::class.java) as T? }
-            InvoiceType.ACCOUNT_STATEMENT -> xmlFile?.let { FileService.unmarshalFile(it, OFXFileAccountStatement::class.java) as T? }
+            InvoiceType.CREDIT_INVOICE -> xmlFile?.let { FileService.unmarshalFile(it, OFXFileCreditInvoice::class.java) }
+            InvoiceType.ACCOUNT_STATEMENT -> xmlFile?.let { FileService.unmarshalFile(it, OFXFileAccountStatement::class.java) }
             else -> {
                 throw FileProcessingException("Unsupported invoice type: ${this.preferences?.invoiceType}")
             }
@@ -127,8 +132,8 @@ open class CommonOFXTransactionProcessor(
                             cleanedLine = starting + value + ending
                         } else {
                             if (StringUtils.equals(cleanedLine, "<OFX>")) continue
-                            val greaterThanSignIndex = cleanedLine!!.indexOf('>')
-                            val property = cleanedLine!!.substring(1, greaterThanSignIndex)
+                            val greaterThanSignIndex = cleanedLine.indexOf('>')
+                            val property = cleanedLine.substring(1, greaterThanSignIndex)
 
                             if (StringUtils.equals(cleanedLine, "</BANKTRANLIST>")) {
                                 cleanedLine = "</STMTTRN>" + System.lineSeparator() + cleanedLine
