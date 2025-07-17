@@ -1,23 +1,127 @@
-openapi: "3.0.3"
+openapi: 3.0.1
 info:
-  title: "Application API"
-  description: "Application API"
-  version: "1.0.0"
-servers:
-  - url: "http://0.0.0.0:8080"
+  title: ''
+  description: ''
+  version: 1.0.0
 paths:
-  /:
-    get:
-      description: "Hello World!"
+  /api/v1/file/process:
+    post:
+      summary: /v1/file/process
+      deprecated: false
+      description: Endpoint for processing financial files
+      tags: []
+      parameters:
+        - name: Institution
+          in: header
+          description: Financial Institution Name
+          required: false
+          example: Nubank
+          schema:
+            type: string
+        - name: File-Type
+          in: header
+          description: Finalcial File Type
+          required: false
+          example: OFX
+          schema:
+            type: string
+        - name: CSV-Separator
+          in: header
+          description: Separator for CSV
+          required: false
+          example: ','
+          schema:
+            type: string
+        - name: DateTime-Pattern
+          in: header
+          description: Pattern for dates
+          required: false
+          example: dd/MM/yyyy HH:mm:ss
+          schema:
+            type: string
+        - name: Invoice-Type
+          in: header
+          description: Invoice Type of the File
+          required: false
+          example: CREDIT_INVOICE
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+            example: >-
+              file:///Users/gusthawojunkes/Library/CloudStorage/GoogleDrive-gusthawojunkes14@gmail.com/My
+              Drive/BANCOS/nubank/nubank-2022-05.ofx
       responses:
-        "200":
-          description: "OK"
+        '200':
+          description: ''
           content:
-            text/plain:
+            application/json:
               schema:
-                type: "string"
-              examples:
-                Example#1:
-                  value: "Hello World!"
+                type: array
+                items:
+                  type: object
+                  properties:
+                    value:
+                      type: number
+                    description:
+                      type: string
+                    transactionTime:
+                      type: string
+                    institutionUUID:
+                      type: string
+                    transactionType:
+                      type: string
+                    institution:
+                      type: string
+                    cardType:
+                      type: string
+                    currency:
+                      type: string
+                  required:
+                    - value
+                    - description
+                    - transactionTime
+                    - institutionUUID
+                    - transactionType
+                    - institution
+                    - cardType
+                    - currency
+          headers: {}
+      security: []
 components:
-  schemas: {}
+  schemas:
+    Financial Transaction:
+      type: object
+      properties:
+        value:
+          type: number
+        description:
+          type: string
+        transactionTime:
+          type: string
+        institutionUUID:
+          type: string
+        transactionType:
+          type: string
+        institution:
+          type: string
+        cardType:
+          type: string
+        currency:
+          type: string
+      required:
+        - value
+        - description
+        - transactionTime
+        - institutionUUID
+        - transactionType
+        - institution
+        - cardType
+        - currency
+  securitySchemes: {}
+servers: []
+security: []
