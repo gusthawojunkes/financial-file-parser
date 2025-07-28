@@ -11,6 +11,7 @@ val apacheCommonsCollectionsVersion: String by project
 val kotlinCsvVersion: String by project
 val micrometerVersion: String by project
 val prometheusVersion: String by project
+val koinVersion: String by project
 
 plugins {
     kotlin("jvm") version "2.0.0"
@@ -51,12 +52,14 @@ repositories {
 }
 
 dependencies {
-    implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-server-core-jvm")
-    implementation("io.ktor:ktor-serialization-gson:$ktorVersion")
-    implementation("io.ktor:ktor-server-swagger:$ktorVersion")
     implementation("io.ktor:ktor-server-netty-jvm")
     implementation("io.ktor:ktor-server-config-yaml")
+    implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
+    implementation("io.ktor:ktor-serialization-gson:$ktorVersion")
+    implementation("io.ktor:ktor-server-swagger:$ktorVersion")
+    implementation("io.ktor:ktor-server-cors:${ktorVersion}")
+    implementation("io.ktor:ktor-server-metrics-micrometer:${ktorVersion}")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("javax.xml.bind:jaxb-api:$jaxbApiVersion")
     implementation("org.glassfish.jaxb:jaxb-runtime:$jaxbRuntimeVersion")
@@ -64,14 +67,15 @@ dependencies {
     implementation("org.apache.commons:commons-lang3:$apacheCommonsLangVersion")
     implementation("org.apache.commons:commons-collections4:$apacheCommonsCollectionsVersion")
     implementation("com.jsoizo:kotlin-csv-jvm:$kotlinCsvVersion")
-    implementation("io.ktor:ktor-server-cors:$ktorVersion")
 
-    implementation("io.ktor:ktor-server-metrics-micrometer:$ktorVersion")
     implementation("io.micrometer:micrometer-registry-prometheus:$prometheusVersion")
     implementation("io.micrometer:micrometer-core:$micrometerVersion")
 
+    implementation("io.insert-koin:koin-ktor:$koinVersion")
+    implementation("io.insert-koin:koin-logger-slf4j:$koinVersion")
+
+    testImplementation("io.ktor:ktor-server-test-host:${ktorVersion}")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
-    testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
     testImplementation("io.mockk:mockk:$mockkVersion")
 }
 
