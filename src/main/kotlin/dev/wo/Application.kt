@@ -12,4 +12,5 @@ fun Application.module() {
     configureHTTP()
     configureRouting()
     configureCors()
+    configureMetrics()
 }
