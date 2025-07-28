@@ -9,6 +9,8 @@ val gsonVersion: String by project
 val apacheCommonsLangVersion: String by project
 val apacheCommonsCollectionsVersion: String by project
 val kotlinCsvVersion: String by project
+val micrometerVersion: String by project
+val prometheusVersion: String by project
 
 plugins {
     kotlin("jvm") version "2.0.0"
@@ -63,6 +65,11 @@ dependencies {
     implementation("org.apache.commons:commons-collections4:$apacheCommonsCollectionsVersion")
     implementation("com.jsoizo:kotlin-csv-jvm:$kotlinCsvVersion")
     implementation("io.ktor:ktor-server-cors:$ktorVersion")
+
+    implementation("io.ktor:ktor-server-metrics-micrometer:$ktorVersion")
+    implementation("io.micrometer:micrometer-registry-prometheus:$prometheusVersion")
+    implementation("io.micrometer:micrometer-core:$micrometerVersion")
+
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
     testImplementation("io.mockk:mockk:$mockkVersion")

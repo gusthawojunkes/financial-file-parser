@@ -1,0 +1,8 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'ffp_api'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['parser-api:8080']
