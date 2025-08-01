@@ -1,96 +1,105 @@
 openapi: 3.0.1
 info:
-  title: ''
-  description: ''
+  title: Financial File Parser API
+  description: This document provides details about the API endpoints available in the Financial File Parser application.
   version: 1.0.0
+tags:
+  - name: Health
+    description: API health check operations
+  - name: File Processing
+    description: Operations related to processing financial files
 paths:
+  /health-check:
+    get:
+      summary: Health Check
+      tags:
+        - Health
+      description: Checks the health of the server. Useful for monitoring and uptime checks.
+      responses:
+        '200':
+          description: Up and running!
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Up and running!
   /api/v1/file/process:
     post:
-      summary: /v1/file/process
+      summary: Process Financial File
       deprecated: false
-      description: Endpoint for processing financial files
-      tags: []
+      description: Processes an uploaded financial file (e.g., a bank statement or credit card bill) and extracts transaction data.
+      tags:
+        - File Processing
       parameters:
         - name: Institution
           in: header
-          description: Financial Institution Name
-          required: false
-          example: Nubank
+          description: 'The name of the financial institution.'
+          required: true
           schema:
             type: string
+            enum:
+              - NUBANK
+              - ITAU
+              - C6_BANK
+              - BRADESCO
+              - WISE
+              - ANY
         - name: File-Type
           in: header
-          description: Finalcial File Type
-          required: false
-          example: OFX
+          description: The type of file being uploaded (e.g., PDF, CSV, OFX).
+          required: true
           schema:
             type: string
-        - name: CSV-Separator
-          in: header
-          description: Separator for CSV
-          required: false
-          example: ','
-          schema:
-            type: string
-        - name: DateTime-Pattern
-          in: header
-          description: Pattern for dates
-          required: false
-          example: dd/MM/yyyy HH:mm:ss
-          schema:
-            type: string
+            enum:
+              - PDF
+              - CSV
+              - OFX
         - name: Invoice-Type
           in: header
-          description: Invoice Type of the File
-          required: false
-          example: CREDIT_INVOICE
+          description: 'The type of invoice.'
+          required: true
           schema:
             type: string
+            enum:
+              - CREDIT_INVOICE
+              - ACCOUNT_STATEMENT
+        - name: CSV-Separator
+          in: header
+          description: The separator character for CSV files. Defaults to ','.
+          required: false
+          schema:
+            type: string
+            default: ','
+        - name: DateTime-Pattern
+          in: header
+          description: The date/time pattern for parsing dates. Defaults to `dd/MM/yyyy HH:mm:ss`.
+          required: false
+          schema:
+            type: string
+            default: dd/MM/yyyy HH:mm:ss
       requestBody:
         content:
           application/octet-stream:
             schema:
               type: string
               format: binary
-            example: >-
-              file:///Users/gusthawojunkes/Library/CloudStorage/GoogleDrive-gusthawojunkes14@gmail.com/My
-              Drive/BANCOS/nubank/nubank-2022-05.ofx
       responses:
         '200':
-          description: ''
+          description: A JSON array of FinancialTransactionResponse objects.
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  type: object
-                  properties:
-                    value:
-                      type: number
-                    description:
-                      type: string
-                    transactionTime:
-                      type: string
-                    institutionUUID:
-                      type: string
-                    transactionType:
-                      type: string
-                    institution:
-                      type: string
-                    cardType:
-                      type: string
-                    currency:
-                      type: string
-                  required:
-                    - value
-                    - description
-                    - transactionTime
-                    - institutionUUID
-                    - transactionType
-                    - institution
-                    - cardType
-                    - currency
-          headers: {}
+                  $ref: '#/components/schemas/Financial Transaction'
+        '204':
+          description: No Content - If no transactions are found in the file.
+        '400':
+          description: Bad Request - If required headers are missing.
+        '415':
+          description: Unsupported Media Type - If the File-Type is invalid.
+        '500':
+          description: Internal Server Error - For unexpected server errors.
       security: []
 components:
   schemas:
@@ -117,10 +126,8 @@ components:
         - value
         - description
         - transactionTime
-        - institutionUUID
         - transactionType
         - institution
-        - cardType
         - currency
   securitySchemes: {}
 servers: []
