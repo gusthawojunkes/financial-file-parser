@@ -8,11 +8,9 @@ COPY gradle ./gradle
 COPY gradlew .
 RUN chmod +x ./gradlew
 
-RUN ./gradlew build --no-daemon
-
 COPY src ./src
 
-RUN ./gradlew build --no-daemon
+RUN ./gradlew shadowJar --no-daemon
 
 FROM amazoncorretto:21
 
