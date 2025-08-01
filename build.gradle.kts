@@ -1,4 +1,3 @@
-
 val kotlinVersion: String by project
 val logbackVersion: String by project
 val ktorVersion: String by project
@@ -74,6 +73,7 @@ dependencies {
 
     implementation("io.insert-koin:koin-ktor:$koinVersion")
     implementation("io.insert-koin:koin-logger-slf4j:$koinVersion")
+    implementation(platform("org.eclipse.jetty:jetty-bom:11.0.20"))
 
     testImplementation("io.ktor:ktor-server-test-host:${ktorVersion}")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
