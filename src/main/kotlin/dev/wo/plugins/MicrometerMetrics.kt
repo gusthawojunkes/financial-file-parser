@@ -12,11 +12,11 @@ import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics
 import io.micrometer.core.instrument.binder.jvm.JvmThreadMetrics
 import io.micrometer.core.instrument.binder.system.FileDescriptorMetrics
 import io.micrometer.core.instrument.binder.system.ProcessorMetrics
-import io.micrometer.prometheusmetrics.PrometheusConfig
 import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
+import org.koin.ktor.ext.inject
 
-fun Application.configureMetrics(): PrometheusMeterRegistry {
-    val appMicrometerRegistry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
+fun Application.configureMetrics() {
+    val appMicrometerRegistry by inject<PrometheusMeterRegistry>()
 
     install(MicrometerMetrics) {
         registry = appMicrometerRegistry
@@ -34,5 +34,5 @@ fun Application.configureMetrics(): PrometheusMeterRegistry {
             call.respond(appMicrometerRegistry.scrape())
         }
     }
-    return appMicrometerRegistry
+
 }

@@ -8,9 +8,10 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() {
+    configureDependencyInjection()
+    configureMetrics()
     configureSerialization()
     configureHTTP()
     configureRouting()
     configureCors()
-    configureMetrics()
 }
