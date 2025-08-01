@@ -18,8 +18,8 @@ FROM amazoncorretto:21
 
 WORKDIR /app
 
-COPY --from=builder /home/gradle/build/libs/*.jar ./application.jar
+COPY --from=builder /home/gradle/build/libs/*.jar ./
 
 EXPOSE 8080
 
-CMD ["java", "-jar", "application.jar"]
+CMD ["java", "-jar", "financial-file-parser.jar"]
