@@ -22,4 +22,4 @@ COPY --from=builder /home/gradle/build/libs/ ./
 
 EXPOSE 8080
 
-CMD ["java", "-Dserver.port=${PORT:-8080}", "-jar", "*.jar"]
+CMD java -Dserver.port=${PORT:-8080} -jar *.jar
