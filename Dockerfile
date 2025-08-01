@@ -22,4 +22,4 @@ COPY --from=builder /home/gradle/build/libs/*.jar ./
 
 EXPOSE 8080
 
-CMD ["java", "-jar", "financial-file-parser.jar"]
+CMD ["java", "-Dserver.port=$PORT", "-jar", "financial-file-parser.jar"]
