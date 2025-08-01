@@ -6,11 +6,11 @@ import dev.wo.domain.enums.FinancialInstitution
 import dev.wo.domain.enums.TransactionType
 import dev.wo.domain.services.ProcessorConfiguration
 import dev.wo.domain.transactions.FinancialTransaction
-import dev.wo.infrastructure.helpers.FileDataHelper
 import java.io.File
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 class BradescoCSVTransactionProcessor(
@@ -44,7 +44,7 @@ class BradescoCSVTransactionProcessor(
 
             val formatter = DateTimeFormatter.ofPattern(dateTimePattern)
             val localDate = LocalDate.parse(transactionTime, formatter)
-            val localDateTime = LocalDateTime.of(localDate, java.time.LocalTime.MIDNIGHT)
+            val localDateTime = LocalDateTime.of(localDate, LocalTime.MIDNIGHT)
             val description = properties[1]
             if ("SALDO ANTERIOR" == description) {
                 continue

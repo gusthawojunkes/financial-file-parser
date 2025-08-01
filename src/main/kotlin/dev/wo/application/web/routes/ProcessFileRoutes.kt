@@ -8,19 +8,25 @@ import dev.wo.infrastructure.adapters.getPreferences
 import dev.wo.infrastructure.adapters.getRequiredHeader
 import dev.wo.infrastructure.adapters.getTempFile
 import dev.wo.infrastructure.factories.TransactionProcessorFactory
+import dev.wo.infrastructure.metrics.MetricsGenerator
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.koin.ktor.ext.inject
 import org.slf4j.LoggerFactory
 import java.io.File
 
 private val logger = LoggerFactory.getLogger(Route::class.java)
 
 fun Route.fileRouting() {
+    val metricsGenerator by inject<MetricsGenerator>()
+
     route("api/v1") {
         route("file") {
             post("process") {
+                metricsGenerator.incrementFileProcessingApiCalls()
+
                 var tempFile: File? = null
                 var transactions: List<FinancialTransactionResponse>
                 try {
