@@ -16,6 +16,10 @@
          <ignored-key id="0374cf2e8dd1bdfd" reason="Key couldn't be downloaded from any key server"/>
       </ignored-keys>
       <trusted-keys>
+         <trusted-key id="04543577d6a9cc626239c50c7ecbd740ff06aeb5">
+            <trusting group="org.glassfish.jaxb"/>
+            <trusting group="^com[.]sun($|([.].*))" regex="true"/>
+         </trusted-key>
          <trusted-key id="073f7a9345756f3b40cdb99e6c70a3b7599c5736" group="org.fusesource.jansi" name="jansi" version="2.4.1"/>
          <trusted-key id="0785b3eff60b1b1bea94e0bb7c25280eae63ebe5" group="org.apache.httpcomponents"/>
          <trusted-key id="0cc641c3a62453ab390066c4a41f13c999945293" group="commons-logging" name="commons-logging" version="1.2"/>
@@ -31,9 +35,14 @@
          </trusted-key>
          <trusted-key id="2e3a1affe42b5f53af19f780bcf4173966770193" group="org.jetbrains" name="annotations" version="13.0"/>
          <trusted-key id="2f528d36d67b69edf998d85778bd65473cb3bd13" group="com.google.cloud.tools"/>
+         <trusted-key id="33fd4bfd33554634053d73c0c2148900bcd3c2af" group="org.jetbrains" name="annotations" version="23.0.0"/>
+         <trusted-key id="3f05dda9f317301e927136d417a27ce7a60ff5f0" group="^io[.]opentelemetry($|([.].*))" regex="true"/>
          <trusted-key id="47504b76cf89c15c0512d9afe16ab52d79fd224f" group="^com[.]google($|([.].*))" regex="true"/>
+         <trusted-key id="4880adc91c17426d0b061c89e8ebcfc35df57b34" group="io.insert-koin"/>
+         <trusted-key id="48b086a7d843cfa258e83286928fbf39003c0425" group="io.micrometer"/>
          <trusted-key id="4db1a49729b053caf015cee9a6adfc93ef34893e" group="org.hamcrest"/>
          <trusted-key id="5897253bea3046aeea95a067e93671c7272b7b3f" group="org.jdom" name="jdom2" version="2.0.6"/>
+         <trusted-key id="59b06224fd8912e36603be79fefe78456eddc34a" group="io.mockk"/>
          <trusted-key id="600ea202b1ec682f4a788e5aac7a514bc9f9bb70" group="io.opencensus"/>
          <trusted-key id="60200ac4ae761f1614d6c46766d68daa073be985">
             <trusting group="ch.qos.logback"/>
@@ -41,8 +50,10 @@
          </trusted-key>
          <trusted-key id="694621a7227d8d5289699830abe9f3126bb741c1" group="com.google.guava"/>
          <trusted-key id="6dd3b8c64ef75253beb2c53ad908a43fb7ec07ac" group="com.sun.activation"/>
+         <trusted-key id="6f538074ccebf35f28af9b066a0975f8b1127b83" group="org.jetbrains.kotlin"/>
          <trusted-key id="7616eb882daf57a11477aaf559a252fb1199d873" group="com.google.code.findbugs" name="jsr305" version="3.0.2"/>
          <trusted-key id="79156e0351af8604de9b186b09a79e1e15a04694" group="org.vafer" name="jdependency" version="2.7.0"/>
+         <trusted-key id="7a1d848e7c2af85eeba69c99e7bf252cf360097e" group="org.latencyutils" name="LatencyUtils" version="2.0.3"/>
          <trusted-key id="7b121b76a7ed6ce6e60ad51784e913a8e3a748c0" group="org.bouncycastle" name="bcprov-jdk18on" version="1.78.1"/>
          <trusted-key id="7e22d50a7ebd9d2cd269b2d4056aca74d46000bf" group="io.netty"/>
          <trusted-key id="84789d24df77a32433ce1f079eb80e92eb2135b1" group="org.apache" name="apache"/>
@@ -52,16 +63,21 @@
             <trusting group="org.jetbrains.kotlinx"/>
          </trusted-key>
          <trusted-key id="9d0a56aaa0d60e0c0c7dccc0b4c70893b62babe8" group="^org[.]apache[.]logging($|([.].*))" regex="true"/>
+         <trusted-key id="a413f67d71beec23add0ce0acb43338e060cf9fa" group="org.jacoco"/>
          <trusted-key id="a5bd02b93e7a40482eb1d66a5f69ad087600b22c" group="org.ow2.asm"/>
          <trusted-key id="a7892505cf1a58076453e52d7999befba1039e8b" group="net.bytebuddy"/>
          <trusted-key id="aed5ee6c45d0fe8d5d1b164f27ded4bf6216db8f" group="org.eclipse.jetty.alpn" name="alpn-api" version="1.1.3.v20160715"/>
          <trusted-key id="b02335aa54ccf21e52bbf9abd9c565aa72ba2fdd" group="io.grpc" name="grpc-context" version="1.27.2"/>
+         <trusted-key id="b159736259472670f2575cfcde6547aef2ee7720" group="net.mamoe.yamlkt"/>
+         <trusted-key id="b2f967b67dadc1f07172dbdade453e55dc86fc9b" group="co.touchlab"/>
          <trusted-key id="b6e73d84ea4fcc47166087253faad2cd5ecbb314" group="org.apache.commons" name="commons-parent"/>
          <trusted-key id="bdb5fa4fe719d787fb3d3197f6d4a1d411e9d1ae" group="com.google.guava"/>
          <trusted-key id="c7be5bcc9fec15518cfda882b0f3710fa64900e7" group="^com[.]google($|([.].*))" regex="true"/>
          <trusted-key id="ce8075a251547bee249bc151a2115ae15f6b8b72" group="^org[.]apache($|([.].*))" regex="true"/>
          <trusted-key id="dbd744ace7ade6aa50dd591f66b50994442d2d40" group="^com[.]squareup($|([.].*))" regex="true"/>
+         <trusted-key id="e113159331a1f87bfc2a93d0960d2e8635a91268" group="org.hdrhistogram" name="HdrHistogram" version="2.2.2"/>
          <trusted-key id="e5138a8e9f2e7e42d38b14d99aee152cdccebfcb" group="io.github.hakky54"/>
+         <trusted-key id="e74bc778a315f77d0e89e42fee5f0c3805a24b16" group="io.prometheus"/>
          <trusted-key id="e74d86e924b8c8873bf13a6bdcfc3946615ac718" group="javax.xml.bind" name="jaxb-api" version="2.2.4"/>
          <trusted-key id="e7dc75fc24fb3c8dfe8086ad3d5839a2262cbbfb" group="org.jetbrains.kotlinx"/>
          <trusted-key id="e85aed155021af8a6c6b7a4a7c7d8456294423ba" group="org.objenesis"/>
@@ -71,6 +87,7 @@
          <trusted-key id="f254b35617dc255d9344bcfa873a8e86b4372146" group="org.codehaus.plexus"/>
          <trusted-key id="fa77dcfef2ee6eb2debedd2c012579464d01c06a" group="org.apache"/>
          <trusted-key id="fa7929f83ad44c4590f6cc6815c71c0a4e0b8edd" group="net.java.dev.jna"/>
+         <trusted-key id="fc411cd3cb7dcb0abc9801058118b3bcdb1a5000" group="jakarta.xml.bind"/>
          <trusted-key id="ff6e2c001948c5f2f38b0cc385911f425ec61b51">
             <trusting group="junit"/>
             <trusting group="org.junit"/>
@@ -631,6 +648,7 @@
       </component>
       <component group="net.java" name="jvnet-parent" version="1">
          <artifact name="jvnet-parent-1.pom">
+            <pgp value="2bcbdd0f23ea1cafcc11d4860374cf2e8dd1bdfd"/>
             <sha256 value="281440811268e65d9e266b3cc898297e214e04f09740d0386ceeb4a8923d63bf" origin="Generated by Gradle" reason="A key couldn't be downloaded"/>
          </artifact>
       </component>
@@ -853,6 +871,7 @@
       </component>
       <component group="org.eclipse.jetty" name="jetty-parent" version="21">
          <artifact name="jetty-parent-21.pom">
+            <pgp value="5de533cb43daf8bc3e372283e7ae839cd7c58886"/>
             <sha256 value="7972e9ec6f3852a8ee1ee5d4d10dcc9dcd6077b125f935aa96b367a6c82337f5" origin="Generated by Gradle" reason="A key couldn't be downloaded"/>
          </artifact>
       </component>
