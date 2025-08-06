@@ -49,7 +49,8 @@ application {
         "--add-opens=java.base/java.nio=ALL-UNNAMED",
         "--add-opens=java.base/sun.nio.ch=ALL-UNNAMED",
         "--add-opens=java.base/java.io=ALL-UNNAMED",
-        "--add-opens=jdk.unsupported/sun.misc=ALL-UNNAMED"
+        "--add-opens=jdk.unsupported/sun.misc=ALL-UNNAMED",
+        "-Dcom.sun.xml.bind.v2.runtime.reflect.opt.Injector.noOptimize=true"
     )
 }
 
