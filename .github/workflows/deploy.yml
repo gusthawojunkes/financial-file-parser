@@ -1,0 +1,9 @@
+name: "[CD] Deploy"
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  sonarqube:
+    uses: ./.github/workflows/sonarqube.yml
