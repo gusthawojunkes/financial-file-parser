@@ -16,6 +16,7 @@ import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 import org.slf4j.LoggerFactory
 import java.io.File
+import java.util.UUID
 
 private val logger = LoggerFactory.getLogger(Route::class.java)
 
@@ -27,6 +28,8 @@ fun Route.fileRouting() {
             post("process") {
                 metricsGenerator.incrementFileProcessingApiCalls()
 
+                val requestUuid = UUID.randomUUID().toString();
+
                 var tempFile: File? = null
                 var transactions: List<FinancialTransactionResponse>
                 try {
@@ -34,7 +37,7 @@ fun Route.fileRouting() {
                     val fileType = call.getRequiredHeader("File-Type")
                     val preferences = call.getPreferences()
 
-                    logger.debug("Processing $institution file with $fileType file type")
+                    logger.info("[$requestUuid] Processing $institution file with $fileType file type")
 
                     tempFile = call.getTempFile()
                     val isFileTypeValid = FileService.validateFileType(fileType)
@@ -53,22 +56,22 @@ fun Route.fileRouting() {
 
                         it.data.map { FinancialTransactionResponse.from(it) }
                     }.also {
-                        logger.debug("Transactions size: {}", it.size)
+                        logger.info("[$requestUuid] Transactions size: {}", it.size)
                     }
 
                 } catch (httpException: HttpException) {
-                    logger.error("Error processing file", httpException)
+                    logger.error("[$requestUuid] Error processing file", httpException)
                     call.respond(httpException.status, httpException.message)
                     return@post
                 } catch (exception: Exception) {
-                    exception.printStackTrace()
+                    logger.error("[$requestUuid] Error processing file", exception)
                     call.respond(HttpStatusCode.InternalServerError, exception.message ?: "Error processing file")
                     return@post
                 } finally {
                     tempFile?.deleteOnExit()
                 }
 
-                logger.debug("Processing finished")
+                logger.info("[$requestUuid] Processing finished")
                 call.respond(HttpStatusCode.OK, transactions)
             }
         }

@@ -1,6 +1,7 @@
 package dev.wo.infrastructure.adapters
 
 import dev.wo.domain.exceptions.FileProcessingException
+import org.slf4j.LoggerFactory
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
@@ -9,6 +10,9 @@ import javax.xml.bind.JAXBContext
 import javax.xml.bind.ValidationEventHandler
 
 object FileService {
+
+    private val logger = LoggerFactory.getLogger(FileService::class.java)
+
     fun validateFileType(expectedType: String): Boolean {
         val availableFileTypes = avaliableFileTypes()
         return availableFileTypes.contains(expectedType.uppercase())
@@ -21,7 +25,7 @@ object FileService {
             val context: JAXBContext = JAXBContext.newInstance(type)
             val unmarshaller = context.createUnmarshaller()
             unmarshaller.eventHandler = ValidationEventHandler { event ->
-                println("Evento de validação: ${event.message}")
+                logger.debug("Evento de validação: ${event.message}")
                 true
             }
             unmarshaller.unmarshal(file)
