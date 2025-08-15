@@ -1,15 +1,19 @@
 <configuration>
+    <property name="LOG_LEVEL" value="INFO" />
+
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{dd/MM/YYYY HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
-    <root level="trace">
+
+    <root level="${LOG_LEVEL}">
         <appender-ref ref="STDOUT"/>
     </root>
-    <logger name="org.eclipse.jetty" level="INFO"/>
-    <logger name="io.netty" level="INFO"/>
-    <logger name="io.ktor.routing" level="INFO"/>
-    <logger name="io.ktor.server.engine" level="INFO"/>
-    <logger name="io.ktor.server.plugins.contentnegotiation" level="INFO"/>
+
+    <logger name="org.eclipse.jetty" level="${LOG_LEVEL}"/>
+    <logger name="io.netty" level="${LOG_LEVEL}"/>
+    <logger name="io.ktor.routing" level="${LOG_LEVEL}"/>
+    <logger name="io.ktor.server.engine" level="${LOG_LEVEL}"/>
+    <logger name="io.ktor.server.plugins.contentnegotiation" level="${LOG_LEVEL}"/>
 </configuration>

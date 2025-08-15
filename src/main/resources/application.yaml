@@ -5,10 +5,9 @@ ktor:
     deployment:
         port: "$PORT:8080"
 
-logging:
-    level:
-        "$LOG_LEVEL:INFO"
-    loggers: INFO
+    logging:
+        level:
+            "$LOG_LEVEL:INFO"
 
 app:
     profile: "$PROFILE:default"
