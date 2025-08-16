@@ -3,6 +3,12 @@ name: "[CD] Deploy"
 on:
   push:
     branches: [ "main" ]
+  workflow_dispatch:
+    inputs:
+      version_tag:
+        description: 'Version tag (e.g., 1.0.0)'
+        required: true
+        default: '0.0.0'
 
 jobs:
   sonarqube:
