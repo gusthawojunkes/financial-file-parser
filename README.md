@@ -2,7 +2,7 @@
 
 <h1>Banoc</h1>
 <p>
-    API for consuming and processing bank statements from Brazilian banks  🇧🇷
+    API for consuming and processing bank statements from Brazilian banks 🇧🇷
 </p>
 
 <p>
