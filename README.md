@@ -1,10 +1,8 @@
 <div align="center">
 
-<!--<img src="assets/logo.png" alt="logo" width="200" height="auto" />-->
-
-<h1>Financial File Parser</h1>
+<h1>Banoc</h1>
 <p>
-    API for consuming and processing bank statements from Brazilian banks.
+    API for consuming and processing bank statements from Brazilian banks 🇧🇷
 </p>
 
 <p>
@@ -21,6 +19,8 @@
     <img src="https://img.shields.io/github/license/gusthawojunkes/financial-file-parser.svg" alt="license" />
   </a>
 </p>
+
+<img src="assets/logo.png" alt="logo" width="200" height="auto" />
 
 </div>
 
