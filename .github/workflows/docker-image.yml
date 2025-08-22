@@ -1,4 +1,4 @@
-name: docker-image.yml
+name: "[CD] Build docker image"
 
 on:
   release:
@@ -15,18 +15,17 @@ env:
 
 jobs:
   test:
-    name: "Testing the application"
+    name: "Test"
     uses: ./.github/workflows/unit-tests.yml
 
   analyze:
-    needs: test
-    name: "Analyzing with SonarQube"
+    name: "SonarQube"
     uses: ./.github/workflows/sonarqube.yml
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   build:
-    needs: analyze
+    needs: [test, analyze]
     name: "Building docker image"
     runs-on: ubuntu-latest
     permissions:
