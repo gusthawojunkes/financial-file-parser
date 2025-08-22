@@ -1,0 +1,63 @@
+name: docker-image.yml
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version_tag:
+        description: 'Version tag (e.g., 1.0.0)'
+        required: true
+        default: '0.0.0'
+
+env:
+  IMAGE_NAME: gusthawojunkes/banoc
+
+jobs:
+  test:
+    name: "Testing the application"
+    uses: ./.github/workflows/unit-tests.yml
+
+  analyze:
+    needs: test
+    name: "Analyzing with SonarQube"
+    uses: ./.github/workflows/sonarqube.yml
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  build:
+    needs: analyze
+    name: "Building docker image"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Determine version
+        id: get_version
+        run: |
+          if [[ "${{ github.event_name }}" == "release" ]]; then
+            echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          else
+            echo "VERSION=${{ github.event.inputs.version_tag }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Log in to the GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ env.IMAGE_NAME }}:${{ steps.get_version.outputs.VERSION }}
+            ghcr.io/${{ env.IMAGE_NAME }}:latest
