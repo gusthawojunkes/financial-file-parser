@@ -63,12 +63,12 @@ fun Route.fileRouting() {
 
                 } catch (httpException: HttpException) {
                     logger.error("[$requestUuid] Error processing file", httpException)
-                    metricsGenerator.incrementErrorCounter(httpException.status.value.toString())
+                    metricsGenerator.incrementStatusCodeError(httpException.status)
                     call.respond(httpException.status, httpException.message)
                     return@post
                 } catch (exception: Exception) {
                     logger.error("[$requestUuid] Error processing file", exception)
-                    metricsGenerator.incrementErrorCounter("INTERNAL_SERVER_ERROR")
+                    metricsGenerator.incrementStatusCodeError(HttpStatusCode.InternalServerError)
                     call.respond(HttpStatusCode.InternalServerError, exception.message ?: "Error processing file")
                     return@post
                 } finally {
