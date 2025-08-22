@@ -1,3 +1,5 @@
 package dev.wo.domain.exceptions
 
-class FileProcessingException(override val message: String) : Exception(message)
+import io.ktor.http.HttpStatusCode
+
+class FileProcessingException(override val message: String) : HttpException(HttpStatusCode.BadRequest, message)
