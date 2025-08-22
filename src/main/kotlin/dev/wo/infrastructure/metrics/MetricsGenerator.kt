@@ -19,4 +19,22 @@ class MetricsGenerator(private val registry: PrometheusMeterRegistry) {
             .register(registry)
             .increment()
     }
+
+    fun incrementInstitutionCounter(institution: String) {
+        logger.info("Incrementing institution counter for institution={}", institution)
+        Counter.builder("file_processing_requests_by_institution_total")
+            .description("Total number of file processing requests by institution")
+            .tag("institution", institution)
+            .register(registry)
+            .increment()
+    }
+
+    fun incrementErrorCounter(errorType: String) {
+        logger.info("Incrementing error counter for errorType={}", errorType)
+        Counter.builder("file_processing_errors_total")
+            .description("Total number of errors during file processing")
+            .tag("error_type", errorType)
+            .register(registry)
+            .increment()
+    }
 }
