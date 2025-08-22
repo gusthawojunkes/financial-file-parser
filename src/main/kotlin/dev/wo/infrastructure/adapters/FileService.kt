@@ -1,6 +1,8 @@
 package dev.wo.infrastructure.adapters
 
+import dev.wo.domain.enums.FinancialInstitution
 import dev.wo.domain.exceptions.FileProcessingException
+import dev.wo.domain.exceptions.WriteFileException
 import org.slf4j.LoggerFactory
 import java.io.BufferedWriter
 import java.io.File
@@ -42,7 +44,7 @@ object FileService {
             }
         } catch (e: IOException) {
             e.printStackTrace()
-            throw FileProcessingException("Error writing file: ${e.message}")
+            throw WriteFileException("Error writing file: ${e.message}")
         }
 
         return file
