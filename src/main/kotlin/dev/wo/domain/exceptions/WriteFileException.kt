@@ -1,8 +1,5 @@
 package dev.wo.domain.exceptions
 
-import io.ktor.http.*
-
-open class HttpException(
-    open val status: HttpStatusCode,
+class WriteFileException(
     override val message: String
 ) : Exception(message)

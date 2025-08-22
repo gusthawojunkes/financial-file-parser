@@ -27,7 +27,7 @@ open class CommonOFXTransactionProcessor(
     @Throws(FileProcessingException::class)
     override fun processFile(): ProcessingResult<List<FinancialTransaction>> {
         try {
-            this.file ?: throw FileProcessingException("File must be set")
+            this.file ?: throw FileProcessingException("File must be set", institution, "OFX")
 
             val xmlFile: File? = toXMLFile(file!!)
             val parsedFile: Any? = getParsedFile(xmlFile)
@@ -36,7 +36,7 @@ open class CommonOFXTransactionProcessor(
                 val transactions = when (it) {
                     is OFXFileCreditInvoice -> createFinancialTransactions(it)
                     is OFXFileAccountStatement -> createFinancialTransactions(it)
-                    else -> throw FileProcessingException("Unsupported file type")
+                    else -> throw FileProcessingException("Unsupported file type", institution, "OFX")
                 }
                 return ProcessingResult.success(transactions)
             }
@@ -96,7 +96,7 @@ open class CommonOFXTransactionProcessor(
             InvoiceType.CREDIT_INVOICE -> xmlFile?.let { FileService.unmarshalFile(it, OFXFileCreditInvoice::class.java) }
             InvoiceType.ACCOUNT_STATEMENT -> xmlFile?.let { FileService.unmarshalFile(it, OFXFileAccountStatement::class.java) }
             else -> {
-                throw FileProcessingException("Unsupported invoice type: ${this.preferences?.invoiceType}")
+                throw FileProcessingException("Unsupported invoice type: ${this.preferences?.invoiceType}", institution, "OFX")
             }
         }
 
@@ -159,11 +159,11 @@ open class CommonOFXTransactionProcessor(
             }
         } catch (e: IOException) {
             e.printStackTrace()
-            throw FileProcessingException("Error reading file: ${e.message}")
+            throw FileProcessingException("Error reading file: ${e.message}", institution, "OFX")
         }
 
         if (StringUtils.isBlank(cleanedContent.toString()) && lineNumber == 1) {
-            throw FileProcessingException("File is empty")
+            throw FileProcessingException("File is empty", institution, "OFX")
         }
 
         return cleanedContent.toString()

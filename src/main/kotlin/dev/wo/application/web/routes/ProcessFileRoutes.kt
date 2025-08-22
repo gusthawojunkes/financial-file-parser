@@ -2,6 +2,7 @@ package dev.wo.application.web.routes
 
 import dev.wo.application.web.resource.response.FinancialTransactionResponse
 import dev.wo.domain.enums.FinancialInstitution
+import dev.wo.domain.exceptions.FileProcessingException
 import dev.wo.domain.exceptions.HttpException
 import dev.wo.infrastructure.adapters.FileService
 import dev.wo.infrastructure.adapters.getPreferences
@@ -21,12 +22,12 @@ import java.util.UUID
 private val logger = LoggerFactory.getLogger(Route::class.java)
 
 fun Route.fileRouting() {
-    val metricsGenerator by inject<MetricsGenerator>()
+    val metrics by inject<MetricsGenerator>()
 
     route("api/v1") {
         route("file") {
             post("process") {
-                metricsGenerator.incrementFileProcessingApiCalls()
+                metrics.incrementApiCall()
 
                 val requestUuid = UUID.randomUUID().toString();
 
@@ -34,7 +35,7 @@ fun Route.fileRouting() {
                 var transactions: List<FinancialTransactionResponse>
                 try {
                     val institution = call.getRequiredHeader("Institution")
-                    metricsGenerator.incrementInstitutionCounter(institution)
+                    metrics.incrementInstitution(institution)
 
                     val fileType = call.getRequiredHeader("File-Type")
                     val preferences = call.getPreferences()
@@ -61,14 +62,19 @@ fun Route.fileRouting() {
                         logger.info("[$requestUuid] Transactions size: {}", it.size)
                     }
 
-                } catch (httpException: HttpException) {
-                    logger.error("[$requestUuid] Error processing file", httpException)
-                    metricsGenerator.incrementStatusCodeError(httpException.status)
-                    call.respond(httpException.status, httpException.message)
+                } catch (exception: HttpException) {
+                    logger.error("[$requestUuid] Error processing file", exception)
+                    metrics.incrementError(exception)
+                    call.respond(exception.status, exception.message)
+                    return@post
+                } catch (exception: FileProcessingException) {
+                    logger.error("[$requestUuid] Error processing file", exception)
+                    metrics.incrementError(exception)
+                    call.respond(exception.status, exception.message)
                     return@post
                 } catch (exception: Exception) {
                     logger.error("[$requestUuid] Error processing file", exception)
-                    metricsGenerator.incrementStatusCodeError(HttpStatusCode.InternalServerError)
+                    metrics.incrementError(exception)
                     call.respond(HttpStatusCode.InternalServerError, exception.message ?: "Error processing file")
                     return@post
                 } finally {
