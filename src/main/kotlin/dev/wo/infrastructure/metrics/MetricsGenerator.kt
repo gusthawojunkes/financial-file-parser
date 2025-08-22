@@ -7,6 +7,13 @@ import io.micrometer.core.instrument.Counter
 import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
 import org.slf4j.LoggerFactory
 
+private const val INCREMENT_ERROR_DESCRIPTION = "Total number of errors during file processing"
+
+private const val FILE_PROCESSING_ERRORS_TOTAL = "file_processing_errors_total"
+
+private const val ERROR_TYPE_TAG = "error_type"
+private const val ERROR_CODE_TAG = "error_code"
+
 class MetricsGenerator(private val registry: PrometheusMeterRegistry) {
 
     private val logger = LoggerFactory.getLogger(MetricsGenerator::class.java)
@@ -28,33 +35,33 @@ class MetricsGenerator(private val registry: PrometheusMeterRegistry) {
 
     fun incrementError(exception: HttpException) {
         increment(
-            id = "file_processing_errors_total",
-            description = "Total number of errors during file processing",
+            id = FILE_PROCESSING_ERRORS_TOTAL,
+            description = INCREMENT_ERROR_DESCRIPTION,
             tags = mapOf(
-                "error_type" to exception.status.description,
-                "error_code" to exception.status.value.toString()
+                ERROR_TYPE_TAG to exception.status.description,
+                ERROR_CODE_TAG to exception.status.value.toString()
             )
         )
     }
 
     fun incrementError(exception: FileProcessingException) {
         increment(
-            id = "file_processing_errors_total",
-            description = "Total number of errors during file processing",
+            id = FILE_PROCESSING_ERRORS_TOTAL,
+            description = INCREMENT_ERROR_DESCRIPTION,
             tags = mapOf(
-                "error_type" to exception.status.description,
-                "error_code" to exception.status.value.toString()
+                ERROR_TYPE_TAG to exception.status.description,
+                ERROR_CODE_TAG to exception.status.value.toString()
             )
         )
     }
 
     fun incrementError(exception: Exception) {
         increment(
-            id = "file_processing_errors_total",
-            description = "Total number of errors during file processing",
+            id = FILE_PROCESSING_ERRORS_TOTAL,
+            description = INCREMENT_ERROR_DESCRIPTION,
             tags = mapOf(
-                "error_type" to HttpStatusCode.InternalServerError.description,
-                "error_code" to HttpStatusCode.InternalServerError.value.toString()
+                ERROR_TYPE_TAG to HttpStatusCode.InternalServerError.description,
+                ERROR_CODE_TAG to HttpStatusCode.InternalServerError.value.toString()
             )
         )
     }
