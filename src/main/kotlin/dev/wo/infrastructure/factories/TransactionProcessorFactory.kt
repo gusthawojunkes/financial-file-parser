@@ -1,6 +1,7 @@
 package dev.wo.infrastructure.factories
 
 import dev.wo.domain.enums.FinancialInstitution
+import dev.wo.domain.enums.FinancialInstitution.*
 import dev.wo.domain.exceptions.FileProcessingException
 import dev.wo.domain.services.TransactionProcessor
 import dev.wo.infrastructure.adapters.processors.BradescoCSVTransactionProcessor
@@ -16,29 +17,30 @@ object TransactionProcessorFactory {
         val processorFileType = fileType.lowercase()
 
         return when (institution) {
-            FinancialInstitution.NUBANK -> when (processorFileType) {
+            NUBANK -> when (processorFileType) {
                 "ofx" -> NubankOFXTransactionProcessor()
-                else -> throw FileProcessingException("Invalid file type for Nubank")
+                else -> throw FileProcessingException("Invalid file type for Nubank",
+                    NUBANK, fileType)
             }
-            FinancialInstitution.WISE -> when (processorFileType) {
+            WISE -> when (processorFileType) {
                 "csv" -> WiseCSVTransactionProcessor()
-                else -> throw FileProcessingException("Invalid file type for Wise")
+                else -> throw FileProcessingException("Invalid file type for Wise", WISE, fileType)
             }
-            FinancialInstitution.C6_BANK -> when(processorFileType) {
+            C6_BANK -> when(processorFileType) {
                 "ofx" -> C6OFXTransactionProcessor()
                 "csv" -> C6CSVTransactionProcessor()
-                else -> throw FileProcessingException("Invalid file type for C6 Bank")
+                else -> throw FileProcessingException("Invalid file type for C6 Bank", C6_BANK, fileType)
             }
-            FinancialInstitution.BRADESCO -> when(processorFileType) {
+            BRADESCO -> when(processorFileType) {
                 "csv" -> BradescoCSVTransactionProcessor()
-                else -> throw FileProcessingException("Invalid file type for Bradesco")
+                else -> throw FileProcessingException("Invalid file type for Bradesco", BRADESCO, fileType)
             }
-            FinancialInstitution.ANY -> when (processorFileType) {
+            ANY -> when (processorFileType) {
                 "csv" -> CommonCSVTransactionProcessor()
-                "ofx" -> CommonOFXTransactionProcessor(institution = FinancialInstitution.ANY)
-                else -> throw FileProcessingException("Invalid file type for Any")
+                "ofx" -> CommonOFXTransactionProcessor(institution = ANY)
+                else -> throw FileProcessingException("Invalid file type for Any", ANY, fileType)
             }
-            else -> throw FileProcessingException("Invalid financial institution")
+            else -> throw FileProcessingException("Invalid financial institution", UNKNOWN, fileType)
         }
     }
 }
