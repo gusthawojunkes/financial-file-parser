@@ -1,0 +1,9 @@
+apiVersion: 1
+
+datasources:
+  - name: Loki
+    type: loki
+    access: proxy
+    url: ${LOKI_URL}
+    jsonData:
+      maxLines: 1000
