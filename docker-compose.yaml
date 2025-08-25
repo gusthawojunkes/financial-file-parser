@@ -1,6 +1,7 @@
 volumes:
   prometheus_data:
   grafana_data:
+  loki_data:
 
 services:
   parser-api:
@@ -29,6 +30,18 @@ services:
     depends_on:
       - parser-api
 
+  loki:
+    image: grafana/loki:latest
+    container_name: loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./loki:/etc/loki
+      - loki_data:/loki
+    command: -config.file=/etc/loki/loki-config.yaml
+    depends_on:
+      - parser-api
+
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
@@ -36,8 +49,11 @@ services:
       - "3000:3000"
     volumes:
       - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
+      - LOKI_URL=http://loki:3100
     depends_on:
       - prometheus
+      - loki
