@@ -11,6 +11,7 @@ val kotlinCsvVersion: String by project
 val micrometerVersion: String by project
 val prometheusVersion: String by project
 val koinVersion: String by project
+val lokiVersion: String by project
 
 plugins {
     kotlin("jvm") version "2.0.0"
@@ -80,6 +81,8 @@ dependencies {
 
     implementation("io.insert-koin:koin-ktor:$koinVersion")
     implementation("io.insert-koin:koin-logger-slf4j:$koinVersion")
+
+    implementation("com.github.loki4j:loki-logback-appender:$lokiVersion")
 
     testImplementation("io.ktor:ktor-server-test-host:${ktorVersion}")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
