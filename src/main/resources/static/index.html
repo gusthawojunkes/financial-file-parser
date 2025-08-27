@@ -102,6 +102,16 @@
                                     <option value="PDF">PDF (Não suportado)</option>
                                 </select>
                             </div>
+                            <div id="csv-options" class="d-none">
+                                <div class="mb-3">
+                                    <label for="csvSeparator" class="form-label">Separador CSV</label>
+                                    <input type="text" class="form-control" id="csvSeparator" name="csvSeparator" value=",">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="dateTimeFormat" class="form-label">Formato da Data/Hora</label>
+                                    <input type="text" class="form-control" id="dateTimeFormat" name="dateTimeFormat" value="dd/MM/yyyy">
+                                </div>
+                            </div>
                             <div class="mb-3">
                                 <label for="invoiceType" class="form-label">Tipo do arquivo</label>
                                 <select class="form-select" id="invoiceType" name="invoiceType" required>
@@ -169,6 +179,16 @@
             const fileNameDiv = document.getElementById('fileName');
             const resultContainer = document.getElementById('result-container');
             const mainRow = document.querySelector('.row');
+            const fileExtension = document.getElementById('fileExtension');
+            const csvOptions = document.getElementById('csv-options');
+
+            fileExtension.addEventListener('change', (e) => {
+                if (e.target.value === 'CSV') {
+                    csvOptions.classList.remove('d-none');
+                } else {
+                    csvOptions.classList.add('d-none');
+                }
+            });
 
             if(fileDropZone) {
                 fileDropZone.addEventListener('click', () => fileInput.click());
@@ -220,20 +240,38 @@
                     const invoiceType = document.getElementById('invoiceType').value;
 
                     const url = '/api/v1/file/process';
+                    
+                    const headers = {
+                        'Content-Type': 'application/octet-stream',
+                        'Institution': institution,
+                        'File-Type': fileExtension,
+                        'Invoice-Type': invoiceType
+                    };
+
+                    if (fileExtension === 'CSV') {
+                        headers['CSV-Separator'] = document.getElementById('csvSeparator').value;
+                        headers['DateTime-Pattern'] = document.getElementById('dateTimeFormat').value;
+                    }
 
                     try {
                         const response = await fetch(url, {
                             method: 'POST',
                             body: file,
-                            headers: {
-                                'Content-Type': 'application/octet-stream',
-                                'Institution': institution,
-                                'File-Type': fileExtension,
-                                'Invoice-Type': invoiceType
-                            }
+                            headers: headers
                         });
 
-                        if (response.ok) {
+                        if (response.status === 204) {
+                            mainRow.classList.remove('justify-content-center');
+                            resultContainer.classList.remove('d-none');
+                            resultDiv.innerHTML = `
+                                <div class="card shadow-sm">
+                                    <h3>Resultado do processamento</h3>
+                                    <div class="alert alert-info" role="alert">
+                                        Não foram encontradas transações no arquivo.
+                                    </div>
+                                </div>
+                            `;
+                        } else if (response.ok) {
                             const result = await response.json();
                             const jsonResult = JSON.stringify(result, null, 2);
                             const itemCount = result.length;
