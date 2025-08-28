@@ -83,6 +83,7 @@ dependencies {
     implementation("io.insert-koin:koin-logger-slf4j:$koinVersion")
 
     implementation("com.github.loki4j:loki-logback-appender:$lokiVersion")
+    implementation("io.github.resilience4j:resilience4j-ratelimiter:2.2.0")
 
     testImplementation("io.ktor:ktor-server-test-host:${ktorVersion}")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
