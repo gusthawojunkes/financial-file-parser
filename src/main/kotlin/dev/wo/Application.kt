@@ -8,7 +8,7 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() {
-    configureDependencyInjection()
+    configureDependencyInjection(environment.config)
     configureMetrics()
     configureSerialization()
     configureHTTP()
