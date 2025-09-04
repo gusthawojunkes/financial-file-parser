@@ -16,8 +16,9 @@ FROM amazoncorretto:21
 
 WORKDIR /app
 
-COPY --from=builder /home/gradle/build/libs/ ./
+COPY --from=builder /home/gradle/build/libs/*.jar ./app.jar
+COPY --from=builder /home/gradle/src/main/resources/ ./resources/
 
 EXPOSE 8080
 
-CMD java -Dserver.port=${PORT:-8080} -jar *.jar
+CMD ["java", "-cp", "app.jar:resources/", "dev.wo.ApplicationKt"]
