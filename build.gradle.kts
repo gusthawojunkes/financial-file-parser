@@ -38,7 +38,7 @@ sonar {
 }
 
 group = "dev.wo"
-version = "1.4.0"
+version = "1.5.0"
 
 application {
     mainClass.set("io.ktor.server.netty.EngineMain")
