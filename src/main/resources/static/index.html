@@ -87,8 +87,9 @@
         .helper-btn {
             background: none;
             border: none;
-            padding: 0 0.3rem;
-            margin-left: 0.3rem;
+            padding: 0;
+            margin-left: 0.1rem;
+            margin-bottom: 0.38rem;
             cursor: pointer;
             color: #0d6efd;
             vertical-align: middle;
@@ -125,7 +126,7 @@
             position: relative;
             display: inline-flex;
             align-items: center;
-            margin-left: 0.2rem;
+            margin-left: 0;
         }
         .helper-subtitle .helper-btn {
             margin-left: 0.1rem;
@@ -153,7 +154,7 @@
                                 <button type="button" class="helper-btn" tabindex="0" aria-label="Ajuda sobre envio de arquivo">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-width="2" d="M12 16v-4"/><circle cx="12" cy="8" r="1.5" fill="#0d6efd"/></svg>
                                 </button>
-                                <span class="helper-tooltip">Selecione ou arraste um arquivo OFX, PDF ou CSV para processar. O arquivo deve conter os dados bancários que você deseja analisar.</span>
+                                <span class="helper-tooltip">Selecione ou arraste um arquivo OFX ou CSV para processar. O arquivo deve conter os dados bancários que você deseja analisar.</span>
                             </h5>
                             <div class="file-drop-zone mt-3" id="fileDropZone">
                                 <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-image"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></div>
@@ -165,12 +166,7 @@
                         </div>
 
                         <div class="mt-4">
-                            <h5 class="helper-title">2. Configure os parâmetros
-                                <button type="button" class="helper-btn" tabindex="0" aria-label="Ajuda sobre configuração de parâmetros">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-width="2" d="M12 16v-4"/><circle cx="12" cy="8" r="1.5" fill="#0d6efd"/></svg>
-                                </button>
-                                <span class="helper-tooltip">Escolha a instituição, extensão do arquivo e tipo de extrato. Para CSV, informe o separador e o formato de data/hora conforme o arquivo.</span>
-                            </h5>
+                            <h5 class="helper-title">2. Configure os parâmetros</h5>
                             <div class="mb-3">
                                 <label for="institution" class="form-label">Instituição
                                     <span class="helper-subtitle">
