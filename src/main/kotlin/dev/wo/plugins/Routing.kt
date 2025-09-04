@@ -12,13 +12,7 @@ fun Application.configureRouting() {
             call.respondText("Up and running!")
         }
 
-        get("/demo") {
-            call.respondRedirect("/demo/index.html")
-        }
-
-        static("/demo") {
-            resources("static")
-        }
+        staticResources("/demo", "static")
 
         fileRouting()
     }
