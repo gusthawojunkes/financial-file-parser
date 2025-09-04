@@ -19,7 +19,7 @@ class RoutingTest {
 
     @Test
     fun `demo endpoint must redirect to index html`() = testApplication {
-        val response = client.get("/")
+        val response = client.get("/demo")
         assertEquals(HttpStatusCode.OK, response.status)
     }
     
