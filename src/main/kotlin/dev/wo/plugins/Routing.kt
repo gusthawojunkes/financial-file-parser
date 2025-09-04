@@ -12,7 +12,7 @@ fun Application.configureRouting() {
             call.respondText("Up and running!")
         }
 
-        staticResources("/demo", "static")
+        staticResources("/", "static")
 
         fileRouting()
     }
