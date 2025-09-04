@@ -79,14 +79,63 @@
         .copy-btn:hover {
             background-color: #5a6268;
         }
-        .hljs {
-            border-radius: 8px;
-            height: 100%;
-        }
         .ts-control .item img, .ts-dropdown .option img {
             width: 24px;
             height: 24px;
             margin-right: 8px;
+        }
+        .helper-btn {
+            background: none;
+            border: none;
+            padding: 0 0.3rem;
+            margin-left: 0.3rem;
+            cursor: pointer;
+            color: #0d6efd;
+            vertical-align: middle;
+            font-size: 1.1em;
+        }
+        .helper-btn:focus {
+            outline: none;
+        }
+        .helper-tooltip {
+            display: none;
+            position: absolute;
+            left: 110%;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #212529;
+            color: #fff;
+            padding: 0.7rem 1rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            white-space: pre-line;
+            z-index: 10000;
+            min-width: 220px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+        }
+        .helper-btn:hover + .helper-tooltip,
+        .helper-btn:focus + .helper-tooltip {
+            display: block;
+        }
+        .helper-title {
+            position: relative;
+            display: inline-block;
+        }
+        .helper-subtitle {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            margin-left: 0.2rem;
+        }
+        .helper-subtitle .helper-btn {
+            margin-left: 0.1rem;
+            padding: 0;
+            vertical-align: middle;
+        }
+        .helper-subtitle .helper-tooltip {
+            left: 110%;
+            top: 50%;
+            transform: translateY(-50%);
         }
     </style>
 </head>
@@ -100,7 +149,12 @@
                 <div class="card shadow-sm">
                     <form id="uploadForm">
                         <div>
-                            <h5>1. Envie o seu arquivo</h5>
+                            <h5 class="helper-title">1. Envie o seu arquivo
+                                <button type="button" class="helper-btn" tabindex="0" aria-label="Ajuda sobre envio de arquivo">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-width="2" d="M12 16v-4"/><circle cx="12" cy="8" r="1.5" fill="#0d6efd"/></svg>
+                                </button>
+                                <span class="helper-tooltip">Selecione ou arraste um arquivo OFX, PDF ou CSV para processar. O arquivo deve conter os dados bancários que você deseja analisar.</span>
+                            </h5>
                             <div class="file-drop-zone mt-3" id="fileDropZone">
                                 <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-image"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></div>
                                 <p>Clique para enviar ou arraste e solte</p>
@@ -111,13 +165,32 @@
                         </div>
 
                         <div class="mt-4">
-                            <h5>2. Configure os parâmetros</h5>
+                            <h5 class="helper-title">2. Configure os parâmetros
+                                <button type="button" class="helper-btn" tabindex="0" aria-label="Ajuda sobre configuração de parâmetros">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-width="2" d="M12 16v-4"/><circle cx="12" cy="8" r="1.5" fill="#0d6efd"/></svg>
+                                </button>
+                                <span class="helper-tooltip">Escolha a instituição, extensão do arquivo e tipo de extrato. Para CSV, informe o separador e o formato de data/hora conforme o arquivo.</span>
+                            </h5>
                             <div class="mb-3">
-                                <label for="institution" class="form-label">Instituição</label>
+                                <label for="institution" class="form-label">Instituição
+                                    <span class="helper-subtitle">
+                                        <button type="button" class="helper-btn" tabindex="0" aria-label="Ajuda sobre instituição">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-width="2" d="M12 16v-4"/><circle cx="12" cy="8" r="1.5" fill="#0d6efd"/></svg>
+                                        </button>
+                                        <span class="helper-tooltip">Selecione o banco ou instituição financeira do arquivo.</span>
+                                    </span>
+                                </label>
                                 <select id="institution" name="institution" required></select>
                             </div>
                             <div class="mb-3">
-                                <label for="fileExtension" class="form-label">Extensão do arquivo</label>
+                                <label for="fileExtension" class="form-label">Extensão do arquivo
+                                    <span class="helper-subtitle">
+                                        <button type="button" class="helper-btn" tabindex="0" aria-label="Ajuda sobre extensão do arquivo">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-width="2" d="M12 16v-4"/><circle cx="12" cy="8" r="1.5" fill="#0d6efd"/></svg>
+                                        </button>
+                                        <span class="helper-tooltip">Escolha o formato do arquivo enviado: OFX, CSV ou PDF.</span>
+                                    </span>
+                                </label>
                                 <select class="form-select" id="fileExtension" name="fileExtension" required>
                                     <option value="OFX">OFX</option>
                                     <option value="CSV">CSV</option>
@@ -126,16 +199,37 @@
                             </div>
                             <div id="csv-options" class="d-none">
                                 <div class="mb-3">
-                                    <label for="csvSeparator" class="form-label">Separador CSV</label>
+                                    <label for="csvSeparator" class="form-label">Separador CSV
+                                        <span class="helper-subtitle">
+                                            <button type="button" class="helper-btn" tabindex="0" aria-label="Ajuda sobre separador CSV">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-width="2" d="M12 16v-4"/><circle cx="12" cy="8" r="1.5" fill="#0d6efd"/></svg>
+                                            </button>
+                                            <span class="helper-tooltip">Informe o caractere separador usado no arquivo CSV, normalmente vírgula ou ponto e vírgula.</span>
+                                        </span>
+                                    </label>
                                     <input type="text" class="form-control" id="csvSeparator" name="csvSeparator" value=",">
                                 </div>
                                 <div class="mb-3">
-                                    <label for="dateTimeFormat" class="form-label">Formato da Data/Hora</label>
+                                    <label for="dateTimeFormat" class="form-label">Formato da Data/Hora
+                                        <span class="helper-subtitle">
+                                            <button type="button" class="helper-btn" tabindex="0" aria-label="Ajuda sobre formato de data/hora">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-width="2" d="M12 16v-4"/><circle cx="12" cy="8" r="1.5" fill="#0d6efd"/></svg>
+                                            </button>
+                                            <span class="helper-tooltip">Informe o padrão de data/hora conforme aparece no arquivo, por exemplo: dd/MM/yyyy.</span>
+                                        </span>
+                                    </label>
                                     <input type="text" class="form-control" id="dateTimeFormat" name="dateTimeFormat" value="dd/MM/yyyy">
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <label for="invoiceType" class="form-label">Tipo do arquivo</label>
+                                <label for="invoiceType" class="form-label">Tipo do arquivo
+                                    <span class="helper-subtitle">
+                                        <button type="button" class="helper-btn" tabindex="0" aria-label="Ajuda sobre tipo do arquivo">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-width="2" d="M12 16v-4"/><circle cx="12" cy="8" r="1.5" fill="#0d6efd"/></svg>
+                                        </button>
+                                        <span class="helper-tooltip">Escolha se o arquivo é uma fatura de cartão de crédito ou um extrato de conta.</span>
+                                    </span>
+                                </label>
                                 <select class="form-select" id="invoiceType" name="invoiceType" required>
                                     <option value="CREDIT_INVOICE">Fatura de cartão de crédito</option>
                                     <option value="ACCOUNT_STATEMENT">Extrato da conta</option>
