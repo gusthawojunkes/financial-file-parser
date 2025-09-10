@@ -1,3 +1,4 @@
+# Estágio de Build (permanece o mesmo, está correto)
 FROM amazoncorretto:21 AS builder
 
 WORKDIR /home/gradle
@@ -16,8 +17,8 @@ FROM amazoncorretto:21
 
 WORKDIR /app
 
-COPY --from=builder /home/gradle/build/libs/ ./
+COPY --from=builder /home/gradle/build/libs/*-all.jar ./app.jar
 
 EXPOSE 8080
 
-CMD java -Dserver.port=${PORT:-8080} -jar *.jar
+CMD ["java", "-jar", "app.jar"]
