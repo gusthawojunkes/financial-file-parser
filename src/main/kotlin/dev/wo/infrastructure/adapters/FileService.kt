@@ -1,6 +1,8 @@
 package dev.wo.infrastructure.adapters
 
+import dev.wo.domain.exceptions.HttpException
 import dev.wo.domain.exceptions.WriteFileException
+import io.ktor.http.HttpStatusCode
 import org.slf4j.LoggerFactory
 import java.io.BufferedWriter
 import java.io.File
@@ -13,9 +15,13 @@ object FileService {
 
     private val logger = LoggerFactory.getLogger(FileService::class.java)
 
-    fun validateFileType(expectedType: String): Boolean {
+    fun validateFileType(expectedType: String) {
         val availableFileTypes = avaliableFileTypes()
-        return availableFileTypes.contains(expectedType.uppercase())
+        val isFileTypeValid = availableFileTypes.contains(expectedType.uppercase())
+
+        if (!isFileTypeValid) {
+            throw HttpException(HttpStatusCode.UnsupportedMediaType, "Invalid file type")
+        }
     }
 
     fun avaliableFileTypes(): List<String> = listOf("OFX", "CSV")

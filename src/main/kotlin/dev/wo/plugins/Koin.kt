@@ -1,5 +1,6 @@
 package dev.wo.plugins
 
+import dev.wo.application.services.ProcessFileService
 import dev.wo.config.App
 import dev.wo.config.AppConfiguration
 import dev.wo.config.RateLimiterConfig
@@ -12,6 +13,7 @@ import org.koin.dsl.module
 fun appModule(config: ApplicationConfig) = module {
     single { PrometheusMeterRegistry(PrometheusConfig.DEFAULT) }
     single { MetricsGenerator(get()) }
+    single { ProcessFileService() }
     single<AppConfiguration> {
         AppConfiguration(
             app = App(
