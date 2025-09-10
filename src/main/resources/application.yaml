@@ -11,3 +11,7 @@ ktor:
 
 app:
     profile: "$PROFILE:default"
+
+rate-limiter:
+    limitPerPeriod: 20
+    refillPeriodInSeconds: 60

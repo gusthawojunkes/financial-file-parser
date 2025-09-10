@@ -68,6 +68,7 @@ dependencies {
     implementation("io.ktor:ktor-server-swagger:$ktorVersion")
     implementation("io.ktor:ktor-server-cors:${ktorVersion}")
     implementation("io.ktor:ktor-server-metrics-micrometer:${ktorVersion}")
+    implementation("io.ktor:ktor-server-rate-limit:${ktorVersion}")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("javax.xml.bind:jaxb-api:$jaxbApiVersion")
     implementation("org.glassfish.jaxb:jaxb-runtime:$jaxbRuntimeVersion")
@@ -83,6 +84,7 @@ dependencies {
     implementation("io.insert-koin:koin-logger-slf4j:$koinVersion")
 
     implementation("com.github.loki4j:loki-logback-appender:$lokiVersion")
+    implementation("io.ktor:ktor-server-status-pages:$ktorVersion")
 
     testImplementation("io.ktor:ktor-server-test-host:${ktorVersion}")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
