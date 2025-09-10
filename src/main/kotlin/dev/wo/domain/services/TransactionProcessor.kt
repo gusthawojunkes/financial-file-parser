@@ -14,8 +14,9 @@ interface TransactionProcessor {
 
     fun <T> createFinancialTransactions(data: T): List<FinancialTransaction>
 
-    fun withFile(file: File?) = file.also { this.file = it }
-
-    fun withPreferences(preferences: ProcessorConfiguration?) = preferences.also { this.preferences = it }
+    fun apply(block: TransactionProcessor.() -> Unit): TransactionProcessor {
+        this.block()
+        return this
+    }
 
 }
