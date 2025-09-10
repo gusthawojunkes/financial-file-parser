@@ -13,5 +13,5 @@ app:
     profile: "$PROFILE:default"
 
 rate-limiter:
-    requests: 100
-    duration: 1m
+    limitPerPeriod: 20
+    refillPeriodInSeconds: 60

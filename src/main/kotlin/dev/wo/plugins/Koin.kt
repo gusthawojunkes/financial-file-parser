@@ -18,8 +18,8 @@ fun appModule(config: ApplicationConfig) = module {
                 profile = config.property("app.profile").getString()
             ),
             rateLimiter = RateLimiterConfig(
-                requests = config.property("rate-limiter.requests").getString().toInt(),
-                duration = config.property("rate-limiter.duration").getString()
+                limitPerPeriod = config.property("rate-limiter.limitPerPeriod").getString().toInt(),
+                refillPeriodInSeconds = config.property("rate-limiter.refillPeriodInSeconds").getString().toInt()
             )
         )
     }

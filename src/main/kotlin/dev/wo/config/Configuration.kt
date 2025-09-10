@@ -10,6 +10,6 @@ data class App(
 )
 
 data class RateLimiterConfig(
-    val requests: Int,
-    val duration: String
+    val limitPerPeriod: Int,
+    val refillPeriodInSeconds: Int
 )
