@@ -134,7 +134,7 @@ open class CommonOFXTransactionProcessor(
 
                         cleanedLine = starting + value + ending
                     } else {
-                                        if (StringUtils.equals(cleanedLine, "<OFX>")) continue
+                        if (StringUtils.equals(cleanedLine, "<OFX>")) continue
                         val greaterThanSignIndex: Int = cleanedLine.indexOf('>')
                         val property = cleanedLine.substring(1, greaterThanSignIndex)
 
@@ -144,9 +144,7 @@ open class CommonOFXTransactionProcessor(
                         val ending = getEndingFor(property)
                         val hasValue = cleanedLine.replace(starting, "").trim { it <= ' ' }.isNotEmpty()
 
-                        if (!cleanedLine.endsWith(ending) && hasValue && endingsByProperty.containsKey(property)) {
-                            cleanedLine += endingsByProperty[property]
-                        }
+                        cleanedLine = appendEndingTagIfNeeded(cleanedLine, ending, hasValue, property)
 
                         cleanedLine = startNewTransactionIfNeeded(cleanedLine, property)
                     }
@@ -163,6 +161,18 @@ open class CommonOFXTransactionProcessor(
         verifyEmptyContent(cleanedContent, lineNumber)
 
         return cleanedContent.toString()
+    }
+
+    private fun appendEndingTagIfNeeded(
+        cleanedLine: String,
+        ending: String,
+        hasValue: Boolean,
+        property: String
+    ): String {
+        if (!cleanedLine.endsWith(ending) && hasValue && endingsByProperty.containsKey(property)) {
+            return cleanedLine + endingsByProperty[property]
+        }
+        return cleanedLine
     }
 
     private fun startNewTransactionIfNeeded(cleanedLine: String, property: String): String {
