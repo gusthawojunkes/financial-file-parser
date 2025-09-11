@@ -134,7 +134,7 @@ open class CommonOFXTransactionProcessor(
 
                         cleanedLine = starting + value + ending
                     } else {
-                        if (StringUtils.equals(cleanedLine, "<OFX>")) continue
+                                        if (StringUtils.equals(cleanedLine, "<OFX>")) continue
                         val greaterThanSignIndex: Int = cleanedLine.indexOf('>')
                         val property = cleanedLine.substring(1, greaterThanSignIndex)
 
@@ -148,9 +148,7 @@ open class CommonOFXTransactionProcessor(
                             cleanedLine += endingsByProperty[property]
                         }
 
-                        if (StringUtils.equals(property, "DTEND")) {
-                            cleanedLine += System.lineSeparator() + "<STMTTRN>"
-                        }
+                        cleanedLine = startNewTransactionIfNeeded(cleanedLine, property)
                     }
                     startOFXFile(cleanedContent, lineNumber)
                     cleanedContent.append(cleanedLine).append(System.lineSeparator())
@@ -165,6 +163,14 @@ open class CommonOFXTransactionProcessor(
         verifyEmptyContent(cleanedContent, lineNumber)
 
         return cleanedContent.toString()
+    }
+
+    private fun startNewTransactionIfNeeded(cleanedLine: String, property: String): String {
+        var line = cleanedLine
+        if (StringUtils.equals(property, "DTEND")) {
+            line += System.lineSeparator() + "<STMTTRN>"
+        }
+        return line
     }
 
     fun startOFXFile(content: StringBuilder, lineNumber: Int) {
