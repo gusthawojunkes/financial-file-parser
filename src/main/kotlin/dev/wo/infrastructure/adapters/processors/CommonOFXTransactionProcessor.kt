@@ -114,7 +114,6 @@ open class CommonOFXTransactionProcessor(
 
     private fun turnIntoXMLContent(file: File): String {
         val cleanedContent = StringBuilder()
-        val endingsByProperty: Map<String, String> = getEndingsByProperty()
         var lineNumber = 1
         val splitRegex: Regex = ":".toRegex()
 
@@ -169,8 +168,8 @@ open class CommonOFXTransactionProcessor(
         hasValue: Boolean,
         property: String
     ): String {
-        if (!cleanedLine.endsWith(ending) && hasValue && endingsByProperty.containsKey(property)) {
-            return cleanedLine + endingsByProperty[property]
+        if (!cleanedLine.endsWith(ending) && hasValue && getEndingsByProperty().containsKey(property)) {
+            return cleanedLine + getEndingsByProperty()[property]
         }
         return cleanedLine
     }
