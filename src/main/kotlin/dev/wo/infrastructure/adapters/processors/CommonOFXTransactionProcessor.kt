@@ -16,15 +16,18 @@ import dev.wo.infrastructure.helpers.FileDataHelper
 import io.ktor.http.*
 import org.apache.commons.collections4.CollectionUtils
 import org.apache.commons.lang3.StringUtils
+import org.slf4j.LoggerFactory
 import java.io.*
+
+private val logger = LoggerFactory.getLogger(CommonOFXTransactionProcessor::class.java)
+private var endingsByProperty: Map<String, String> = mutableMapOf()
 
 open class CommonOFXTransactionProcessor(
     override var file: File? = null,
     override var preferences: ProcessorConfiguration? = null,
-    val institution: FinancialInstitution
+    val institution: FinancialInstitution,
 ) : TransactionProcessor {
 
-    @Throws(FileProcessingException::class)
     override fun processFile(): ProcessingResult<List<FinancialTransaction>> {
         try {
             this.file ?: throw FileProcessingException("File must be set", institution, "OFX")
@@ -41,8 +44,8 @@ open class CommonOFXTransactionProcessor(
                 return ProcessingResult.success(transactions)
             }
 
-            xmlFile?.delete()
-
+            val deleted = xmlFile?.delete()
+            logger.debug("Deleted temp file: $deleted")
             return ProcessingResult.success(emptyList())
         } catch (e: FileProcessingException) {
             return ProcessingResult.error(e.message, HttpStatusCode.InternalServerError)
@@ -71,7 +74,7 @@ open class CommonOFXTransactionProcessor(
                 transactionTime,
                 institutionUUID,
                 transactionType,
-                this.institution,
+                institution = this.institution,
                 cardType
             )
 
@@ -111,48 +114,40 @@ open class CommonOFXTransactionProcessor(
 
     private fun turnIntoXMLContent(file: File): String {
         val cleanedContent = StringBuilder()
-        val endingsByProperty = getEndingsByProperty()
         var lineNumber = 1
-        val splitRegex = ":".toRegex()
+        val splitRegex: Regex = ":".toRegex()
 
         try {
             BufferedReader(FileReader(file)).use { reader ->
                 var line: String
                 while ((reader.readLine().also { line = it }) != null) {
-                    var cleanedLine: String? = line.trim { it <= ' ' }
-                    if (StringUtils.isNotBlank(cleanedLine)) {
-                        val needToReformat = cleanedLine!!.contains(":")
-                        if (lineNumber < 10 && needToReformat) {
-                            val lineProps: Array<String> = cleanedLine.split(splitRegex).dropLastWhile { it.isEmpty() } .toTypedArray()
-                            val property = lineProps[0]
-                            val value = lineProps[1]
-                            val starting = getStartingFor(property)
-                            val ending = getEndingFor(property)
+                    var cleanedLine: String = line.trim { it <= ' ' }
+                    if (StringUtils.isBlank(cleanedLine)) continue
+                    val needToReformat = cleanedLine.contains(":")
+                    if (lineNumber < 10 && needToReformat) {
+                        val lineProps: Array<String> = cleanedLine.split(splitRegex).dropLastWhile { it.isEmpty() } .toTypedArray()
+                        val property = lineProps[0]
+                        val value = lineProps[1]
+                        val starting = getStartingFor(property)
+                        val ending = getEndingFor(property)
 
-                            cleanedLine = starting + value + ending
-                        } else {
-                            if (StringUtils.equals(cleanedLine, "<OFX>")) continue
-                            val greaterThanSignIndex = cleanedLine.indexOf('>')
-                            val property = cleanedLine.substring(1, greaterThanSignIndex)
+                        cleanedLine = starting + value + ending
+                    } else {
+                        if (StringUtils.equals(cleanedLine, "<OFX>")) continue
+                        val greaterThanSignIndex: Int = cleanedLine.indexOf('>')
+                        val property = cleanedLine.substring(1, greaterThanSignIndex)
 
-                            if (StringUtils.equals(cleanedLine, "</BANKTRANLIST>")) {
-                                cleanedLine = "</STMTTRN>" + System.lineSeparator() + cleanedLine
-                            }
+                        cleanedLine = closeSTMTTRNIfNeeded(cleanedLine)
 
-                            val starting = getStartingFor(property)
-                            val ending = getEndingFor(property)
-                            val hasValue = cleanedLine.replace(starting, "").trim { it <= ' ' }.isNotEmpty()
+                        val starting = getStartingFor(property)
+                        val ending = getEndingFor(property)
+                        val hasValue = cleanedLine.replace(starting, "").trim { it <= ' ' }.isNotEmpty()
 
-                            if (!cleanedLine.endsWith(ending) && hasValue && endingsByProperty.containsKey(property)) {
-                                cleanedLine += endingsByProperty[property]
-                            }
+                        cleanedLine = appendEndingTagIfNeeded(cleanedLine, ending, hasValue, property)
 
-                            if (StringUtils.equals(property, "DTEND")) {
-                                cleanedLine += System.lineSeparator() + "<STMTTRN>"
-                            }
-                        }
+                        cleanedLine = startNewTransactionIfNeeded(cleanedLine, property)
                     }
-                    if (lineNumber == 1) cleanedContent.append("<OFX>").append(System.lineSeparator())
+                    startOFXFile(cleanedContent, lineNumber)
                     cleanedContent.append(cleanedLine).append(System.lineSeparator())
                     lineNumber++
                 }
@@ -162,11 +157,47 @@ open class CommonOFXTransactionProcessor(
             throw FileProcessingException("Error reading file: ${e.message}", institution, "OFX")
         }
 
-        if (StringUtils.isBlank(cleanedContent.toString()) && lineNumber == 1) {
-            throw FileProcessingException("File is empty", institution, "OFX")
-        }
+        verifyEmptyContent(cleanedContent, lineNumber)
 
         return cleanedContent.toString()
+    }
+
+    private fun appendEndingTagIfNeeded(
+        cleanedLine: String,
+        ending: String,
+        hasValue: Boolean,
+        property: String
+    ): String {
+        if (!cleanedLine.endsWith(ending) && hasValue && getEndingsByProperty().containsKey(property)) {
+            return cleanedLine + getEndingsByProperty()[property]
+        }
+        return cleanedLine
+    }
+
+    private fun startNewTransactionIfNeeded(cleanedLine: String, property: String): String {
+        var line = cleanedLine
+        if (StringUtils.equals(property, "DTEND")) {
+            line += System.lineSeparator() + "<STMTTRN>"
+        }
+        return line
+    }
+
+    fun startOFXFile(content: StringBuilder, lineNumber: Int) {
+        if (lineNumber == 1) content.append("<OFX>").append(System.lineSeparator())
+    }
+
+    fun closeSTMTTRNIfNeeded(line: String): String {
+        var newLine = line
+        if (StringUtils.equals(line, "</BANKTRANLIST>")) {
+            newLine = "</STMTTRN>" + System.lineSeparator() + line
+        }
+        return newLine
+    }
+
+    fun verifyEmptyContent(content: StringBuilder, lineNumber: Int) {
+        if (StringUtils.isBlank(content) && lineNumber == 1) {
+            throw FileProcessingException("File is empty", institution, "OFX")
+        }
     }
 
     private fun getStartingFor(property: String) = "<$property>"
@@ -174,23 +205,27 @@ open class CommonOFXTransactionProcessor(
     private fun getEndingFor(property: String) = "</$property>"
 
     private fun getEndingsByProperty(): Map<String, String> {
-        val endingsByProperty: MutableMap<String, String> = HashMap()
-        endingsByProperty["CODE"] = "</CODE>"
-        endingsByProperty["SEVERITY"] = "</SEVERITY>"
-        endingsByProperty["LANGUAGE"] = "</LANGUAGE>"
-        endingsByProperty["DTSERVER"] = "</DTSERVER>"
-        endingsByProperty["CURDEF"] = "</CURDEF>"
-        endingsByProperty["ACCTID"] = "</ACCTID>"
-        endingsByProperty["DTSTART"] = "</DTSTART>"
-        endingsByProperty["DTEND"] = "</DTEND>"
-        endingsByProperty["TRNTYPE"] = "</TRNTYPE>"
-        endingsByProperty["DTPOSTED"] = "</DTPOSTED>"
-        endingsByProperty["TRNAMT"] = "</TRNAMT>"
-        endingsByProperty["FITID"] = "</FITID>"
-        endingsByProperty["MEMO"] = "</MEMO>"
-        endingsByProperty["BALAMT"] = "</BALAMT>"
-        endingsByProperty["DTASOF"] = "</DTASOF>"
-        endingsByProperty["TRNUID"] = "</TRNUID>"
+        if (endingsByProperty.isEmpty()) {
+            val map: MutableMap<String, String> = HashMap()
+            map["CODE"] = "</CODE>"
+            map["SEVERITY"] = "</SEVERITY>"
+            map["LANGUAGE"] = "</LANGUAGE>"
+            map["DTSERVER"] = "</DTSERVER>"
+            map["CURDEF"] = "</CURDEF>"
+            map["ACCTID"] = "</ACCTID>"
+            map["DTSTART"] = "</DTSTART>"
+            map["DTEND"] = "</DTEND>"
+            map["TRNTYPE"] = "</TRNTYPE>"
+            map["DTPOSTED"] = "</DTPOSTED>"
+            map["TRNAMT"] = "</TRNAMT>"
+            map["FITID"] = "</FITID>"
+            map["MEMO"] = "</MEMO>"
+            map["BALAMT"] = "</BALAMT>"
+            map["DTASOF"] = "</DTASOF>"
+            map["TRNUID"] = "</TRNUID>"
+            endingsByProperty = map
+        }
+
         return endingsByProperty
     }
 

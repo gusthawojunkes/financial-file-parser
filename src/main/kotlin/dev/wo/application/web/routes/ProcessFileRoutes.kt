@@ -5,15 +5,12 @@ import dev.wo.application.web.resource.response.FinancialTransactionResponse
 import dev.wo.domain.enums.FinancialInstitution
 import dev.wo.domain.exceptions.FileProcessingException
 import dev.wo.domain.exceptions.HttpException
-import dev.wo.infrastructure.adapters.FileService
 import dev.wo.infrastructure.adapters.getPreferences
 import dev.wo.infrastructure.adapters.getRequiredHeader
 import dev.wo.infrastructure.adapters.getTempFile
-import dev.wo.infrastructure.factories.TransactionProcessorFactory
 import dev.wo.infrastructure.metrics.MetricsGenerator
 import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.http.content.file
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
