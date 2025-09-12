@@ -1,4 +1,4 @@
-name: Automatic Versioning and Release
+name: "[CI] Updating version"
 
 on:
   push:
