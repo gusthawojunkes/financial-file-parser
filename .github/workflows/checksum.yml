@@ -1,0 +1,79 @@
+name: Automatic Versioning and Release
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'build.gradle.kts'
+
+jobs:
+  version_and_release:
+    if: github.event_name == 'push' && contains(github.event.head_commit.message, 'Merge pull request')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'corretto'
+          cache: gradle
+
+      - name: Get PR Branch Name
+        id: get_pr_branch_name
+        run: |
+          PR_BRANCH_NAME=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          "https://api.github.com/repos/${{ github.repository }}/pulls?state=closed&per_page=1" | \
+          jq -r '.[0].head.ref')
+          echo "Source PR branch was: $PR_BRANCH_NAME"
+          echo "PR_BRANCH_NAME=$PR_BRANCH_NAME" >> $GITHUB_ENV
+
+      - name: Check Branch Name and Bump Version
+        id: version_bump
+        run: |
+          source_branch="${{ env.PR_BRANCH_NAME }}"
+          current_version=$(grep "version =" build.gradle.kts | cut -d'"' -f2)
+          IFS='.' read -r major minor patch <<< "$current_version"
+
+          if [[ "$source_branch" =~ ^(feat|feature|release)\/ ]]; then
+            new_version="$major.$((minor + 1)).0"
+            echo "Incrementing minor version to: $new_version"
+          elif [[ "$source_branch" =~ ^(fix|bugfix|test|refactor)\/ ]]; then
+            new_version="$major.$minor.$((patch + 1))"
+            echo "Incrementing patch version to: $new_version"
+          else
+            echo "Branch name does not match versioning rules. Skipping version bump."
+            exit 0
+          fi
+
+          sed -i "s/version = \"$current_version\"/version = \"$new_version\"/" build.gradle.kts
+          echo "NEW_VERSION=$new_version" >> $GITHUB_ENV
+
+      - name: Commit and Push new version
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add build.gradle.kts
+          git commit -m "chore(version): Bump version to ${{ env.NEW_VERSION }}"
+          git push
+
+      - name: Create GitHub Release
+        if: success() && env.NEW_VERSION
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ env.NEW_VERSION }}
+          name: Release v${{ env.NEW_VERSION }}
+          draft: false
+          prerelease: false
+          body: |
+            This is an automated release triggered by the merge of a Pull Request from branch ${{ env.PR_BRANCH_NAME }}.
+
+            - Version updated to ${{ env.NEW_VERSION }}
