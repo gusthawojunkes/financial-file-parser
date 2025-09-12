@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - develop # just for test purposes
     paths:
       - 'build.gradle.kts'
 
