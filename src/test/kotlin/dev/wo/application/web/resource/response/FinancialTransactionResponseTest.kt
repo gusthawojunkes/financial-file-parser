@@ -16,10 +16,11 @@ class FinancialTransactionResponseTest {
             value = 100.0,
             description = "Test",
             transactionTime = LocalDateTime.of(2021, 4, 3, 12, 23, 45),
-            institutionUUID = "123",
+            identifier = "abc123fingerprint",
             transactionType = TransactionType.DEBIT,
             institution = FinancialInstitution.NUBANK,
-            cardType = CardType.CREDIT
+            cardType = CardType.CREDIT,
+            institutionUUID = "123"
         )
 
        val financialTransactionResponse = FinancialTransactionResponse.from(financialTransaction)
@@ -27,6 +28,7 @@ class FinancialTransactionResponseTest {
         assertEquals(100.0, financialTransactionResponse.value)
         assertEquals("Test", financialTransactionResponse.description)
         assertEquals("03/04/2021 12:23:45", financialTransactionResponse.transactionTime)
+        assertEquals("abc123fingerprint", financialTransactionResponse.identifier)
         assertEquals("123", financialTransactionResponse.institutionUUID)
         assertEquals(TransactionType.DEBIT, financialTransactionResponse.transactionType)
         assertEquals(FinancialInstitution.NUBANK, financialTransactionResponse.institution)
