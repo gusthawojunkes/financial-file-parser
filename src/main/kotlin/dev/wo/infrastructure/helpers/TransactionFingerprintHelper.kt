@@ -4,9 +4,9 @@ import dev.wo.domain.enums.FinancialInstitution
 import dev.wo.domain.enums.TransactionType
 import java.math.BigDecimal
 import java.math.RoundingMode
-import java.security.MessageDigest
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.UUID
 
 object TransactionFingerprintHelper {
 
@@ -43,13 +43,7 @@ object TransactionFingerprintHelper {
             }
         }
 
-        return sha256(fingerprint)
-    }
-
-    private fun sha256(input: String): String {
-        val digest = MessageDigest.getInstance("SHA-256")
-        val hashBytes = digest.digest(input.toByteArray(Charsets.UTF_8))
-        return hashBytes.joinToString("") { "%02x".format(it.toInt() and 0xFF) }
+        return UUID.nameUUIDFromBytes(fingerprint.toByteArray(Charsets.UTF_8)).toString()
     }
 }
 

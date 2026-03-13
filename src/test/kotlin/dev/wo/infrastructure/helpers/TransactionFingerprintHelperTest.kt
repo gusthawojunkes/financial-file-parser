@@ -134,7 +134,7 @@ class TransactionFingerprintHelperTest {
     }
 
     @Test
-    fun `should generate a 64-character sha256 hex string`() {
+    fun `should generate a valid UUID string`() {
         val id = TransactionFingerprintHelper.generate(
             institution = FinancialInstitution.NUBANK,
             transactionType = TransactionType.DEBIT,
@@ -143,8 +143,8 @@ class TransactionFingerprintHelperTest {
             description = "Teste"
         )
 
-        assertEquals(64, id.length)
-        assert(id.matches(Regex("[0-9a-f]+"))) { "ID deve ser hexadecimal lowercase" }
+        assertEquals(36, id.length)
+        assert(id.matches(Regex("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"))) { "ID deve ser um UUID válido" }
     }
 }
 
