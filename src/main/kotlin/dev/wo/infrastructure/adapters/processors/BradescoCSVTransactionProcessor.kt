@@ -6,6 +6,7 @@ import dev.wo.domain.enums.FinancialInstitution
 import dev.wo.domain.enums.TransactionType
 import dev.wo.domain.services.ProcessorConfiguration
 import dev.wo.domain.transactions.FinancialTransaction
+import dev.wo.infrastructure.helpers.TransactionFingerprintHelper
 import java.io.File
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -49,18 +50,27 @@ class BradescoCSVTransactionProcessor(
             if ("SALDO ANTERIOR" == description) {
                 continue
             }
-            val institutionUUID = properties[2]
             val creditValue = getDoubleValueFromString(properties[3])
             val debitValue = getDoubleValueFromString(properties[4])
             val isDebit = (creditValue == 0.0 && debitValue != 0.0)
+            val transactionType = if (isDebit) TransactionType.DEBIT else TransactionType.CREDIT
+            val finalValue = if (isDebit) -debitValue else creditValue
+            val identifier = TransactionFingerprintHelper.generate(
+                institution = FinancialInstitution.BRADESCO,
+                transactionType = transactionType,
+                value = finalValue,
+                transactionTime = localDateTime,
+                description = description
+            )
             val transaction = FinancialTransaction(
-                if (isDebit) -debitValue else creditValue,
+                finalValue,
                 description,
                 localDateTime,
-                institutionUUID,
-                if (isDebit) TransactionType.DEBIT else TransactionType.CREDIT,
+                identifier,
+                transactionType,
                 FinancialInstitution.BRADESCO,
-                CardType.DEBIT
+                CardType.DEBIT,
+                institutionUUID = null
             )
 
             transactions.add(transaction)

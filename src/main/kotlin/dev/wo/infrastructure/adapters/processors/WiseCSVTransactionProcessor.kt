@@ -7,6 +7,7 @@ import dev.wo.domain.enums.TransactionType
 import dev.wo.domain.services.ProcessorConfiguration
 import dev.wo.domain.transactions.FinancialTransaction
 import dev.wo.infrastructure.helpers.FileDataHelper
+import dev.wo.infrastructure.helpers.TransactionFingerprintHelper
 import java.io.File
 
 class WiseCSVTransactionProcessor(
@@ -27,21 +28,29 @@ class WiseCSVTransactionProcessor(
             val value = row["Amount"]?.toDouble() ?: continue
             val description = row["Description"] ?: ""
             val transactionTime = FileDataHelper.getDate(row["Date"], dateTimePattern) ?: continue
-            val institutionUUID = row["TransferWise ID"] ?: FileDataHelper.generateUUID()
             val transactionType = if (value > 0) TransactionType.CREDIT else TransactionType.DEBIT
             val institution = FinancialInstitution.WISE
             val cardType = CardType.DEBIT // wise doesnt have credit cards
             val currency = row["Currency"] ?: continue
+            val identifier = TransactionFingerprintHelper.generate(
+                institution = institution,
+                transactionType = transactionType,
+                value = value,
+                transactionTime = transactionTime,
+                description = description,
+                currency = currency
+            )
 
             val transaction = FinancialTransaction(
                 value,
                 description,
                 transactionTime,
-                institutionUUID,
+                identifier,
                 transactionType,
                 institution,
                 cardType,
-                currency
+                currency,
+                institutionUUID = null
             )
 
             transactions.add(transaction)

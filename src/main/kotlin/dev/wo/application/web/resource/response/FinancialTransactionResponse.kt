@@ -9,11 +9,12 @@ data class FinancialTransactionResponse(
     val value: Double,
     val description: String,
     val transactionTime: String,
-    val institutionUUID: String? = null,
+    val identifier: String,
     val transactionType: TransactionType,
     val institution: FinancialInstitution,
     val cardType: CardType? = null,
-    val currency: String = "BRL"
+    val currency: String = "BRL",
+    val institutionUUID: String?
 ) {
     companion object {
         fun from(financialTransaction: FinancialTransaction): FinancialTransactionResponse {
@@ -21,11 +22,12 @@ data class FinancialTransactionResponse(
                 value = financialTransaction.value,
                 description = financialTransaction.description,
                 transactionTime = financialTransaction.getFormattedTransactionTime(),
-                institutionUUID = financialTransaction.institutionUUID,
+                identifier = financialTransaction.identifier,
                 transactionType = financialTransaction.transactionType,
                 institution = financialTransaction.institution,
                 cardType = financialTransaction.cardType,
-                currency = financialTransaction.currency
+                currency = financialTransaction.currency,
+                institutionUUID = financialTransaction.institutionUUID
             )
         }
     }

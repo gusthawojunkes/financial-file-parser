@@ -13,6 +13,7 @@ import dev.wo.domain.services.TransactionProcessor
 import dev.wo.domain.transactions.FinancialTransaction
 import dev.wo.infrastructure.adapters.FileService
 import dev.wo.infrastructure.helpers.FileDataHelper
+import dev.wo.infrastructure.helpers.TransactionFingerprintHelper
 import io.ktor.http.*
 import org.apache.commons.collections4.CollectionUtils
 import org.apache.commons.lang3.StringUtils
@@ -64,18 +65,26 @@ open class CommonOFXTransactionProcessor(
         for (ofxTransaction in transactionsFromFile) {
             val value = ofxTransaction.getTrnAmt()?.toDouble() ?: continue
             val description = ofxTransaction.getMemo() ?: ""
-            val transactionTime = FileDataHelper.getDateTime(ofxTransaction.getDtPosted())?: continue
-            val institutionUUID = ofxTransaction.getFitId()?: continue
+            val transactionTime = FileDataHelper.getDateTime(ofxTransaction.getDtPosted()) ?: continue
             val transactionType = FileDataHelper.getTransactionType(ofxTransaction.getTrnType())
+            val identifier = TransactionFingerprintHelper.generate(
+                institution = this.institution,
+                transactionType = transactionType,
+                value = value,
+                transactionTime = transactionTime,
+                description = description
+            )
+            val institutionUUID = ofxTransaction.getFitId()
 
             val transaction = FinancialTransaction(
                 value,
                 description,
                 transactionTime,
-                institutionUUID,
+                identifier,
                 transactionType,
                 institution = this.institution,
-                cardType
+                cardType,
+                institutionUUID = institutionUUID
             )
 
             financialTransactions.add(transaction)

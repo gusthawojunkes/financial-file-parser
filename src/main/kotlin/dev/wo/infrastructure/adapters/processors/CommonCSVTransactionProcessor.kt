@@ -8,6 +8,7 @@ import dev.wo.domain.services.ProcessorConfiguration
 import dev.wo.domain.services.TransactionProcessor
 import dev.wo.domain.transactions.FinancialTransaction
 import dev.wo.infrastructure.helpers.FileDataHelper
+import dev.wo.infrastructure.helpers.TransactionFingerprintHelper
 import java.io.File
 
 open class CommonCSVTransactionProcessor(
@@ -39,19 +40,26 @@ open class CommonCSVTransactionProcessor(
             val value = row["value"]?.toDouble() ?: continue
             val description = row["description"] ?: ""
             val transactionTime = FileDataHelper.getDateTime(row["transactionTime"], dateTimePattern) ?: continue
-            val institutionUUID = row["institutionUUID"] ?: FileDataHelper.generateUUID()
             val transactionType = FileDataHelper.getTransactionType(row["transactionType"])
             val institution = FinancialInstitution.fromString(row["institution"] ?: "")
             val cardType = CardType.fromString(row["cardType"] ?: "")
+            val identifier = TransactionFingerprintHelper.generate(
+                institution = institution,
+                transactionType = transactionType,
+                value = value,
+                transactionTime = transactionTime,
+                description = description
+            )
 
             val transaction = FinancialTransaction(
                 value,
                 description,
                 transactionTime,
-                institutionUUID,
+                identifier,
                 transactionType,
                 institution,
-                cardType
+                cardType,
+                institutionUUID = null
             )
 
             transactions.add(transaction)
