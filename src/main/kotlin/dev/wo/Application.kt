@@ -8,6 +8,8 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() {
+    configureDependencyInjection(environment.config)
+    configureMetrics()
     configureSerialization()
     configureHTTP()
     configureRouting()

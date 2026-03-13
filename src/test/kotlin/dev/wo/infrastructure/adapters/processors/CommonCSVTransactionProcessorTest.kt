@@ -68,4 +68,17 @@ class CommonCSVTransactionProcessorTest {
         assertTrue(result.data.isEmpty())
     }
 
+    @Test
+    fun `should process a big csv file`() {
+        val processor = CommonCSVTransactionProcessor(
+            file = File("src/test/resources/files/csv/large-transactions.csv"),
+            preferences = ProcessorConfiguration(csvSeparator = ';', dateTimePattern = "yyyyMMddHHmmss")
+        )
+
+        val result = processor.processFile()
+
+        assertNotNull(result.data)
+        assertEquals(10000, result.data.size)
+    }
+
 }

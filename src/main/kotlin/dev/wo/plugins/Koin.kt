@@ -1,0 +1,28 @@
+package dev.wo.plugins
+
+import dev.wo.application.services.ProcessFileService
+import dev.wo.config.App
+import dev.wo.config.AppConfiguration
+import dev.wo.config.RateLimiterConfig
+import dev.wo.infrastructure.metrics.MetricsGenerator
+import io.ktor.server.config.ApplicationConfig
+import io.micrometer.prometheusmetrics.PrometheusConfig
+import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
+import org.koin.dsl.module
+
+fun appModule(config: ApplicationConfig) = module {
+    single { PrometheusMeterRegistry(PrometheusConfig.DEFAULT) }
+    single { MetricsGenerator(get()) }
+    single { ProcessFileService() }
+    single<AppConfiguration> {
+        AppConfiguration(
+            app = App(
+                profile = config.property("app.profile").getString()
+            ),
+            rateLimiter = RateLimiterConfig(
+                limitPerPeriod = config.property("rate-limiter.limitPerPeriod").getString().toInt(),
+                refillPeriodInSeconds = config.property("rate-limiter.refillPeriodInSeconds").getString().toInt()
+            )
+        )
+    }
+}

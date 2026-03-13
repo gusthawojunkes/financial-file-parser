@@ -1,3 +1,4 @@
+# Estágio de Build (permanece o mesmo, está correto)
 FROM amazoncorretto:21 AS builder
 
 WORKDIR /home/gradle
@@ -8,18 +9,16 @@ COPY gradle ./gradle
 COPY gradlew .
 RUN chmod +x ./gradlew
 
-RUN ./gradlew build --no-daemon
-
 COPY src ./src
 
-RUN ./gradlew build --no-daemon
+RUN ./gradlew shadowJar --no-daemon
 
 FROM amazoncorretto:21
 
 WORKDIR /app
 
-COPY --from=builder /home/gradle/build/libs/*.jar ./application.jar
+COPY --from=builder /home/gradle/build/libs/*-all.jar ./app.jar
 
 EXPOSE 8080
 
-CMD ["java", "-jar", "application.jar"]
+CMD ["java", "-jar", "app.jar"]

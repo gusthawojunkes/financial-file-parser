@@ -95,7 +95,7 @@ class ProcessNubankOFXFilesRouteTest {
             }
             setBody(fileBytes)
         }
-        assertEquals(HttpStatusCode.InternalServerError, response.status)
+        assertEquals(HttpStatusCode.BadRequest, response.status)
         assertEquals("Invalid financial institution", response.bodyAsText())
     }
 
@@ -125,7 +125,7 @@ class ProcessNubankOFXFilesRouteTest {
             }
             setBody(fileBytes)
         }
-        assertEquals(HttpStatusCode.InternalServerError, response.status)
+        assertEquals(HttpStatusCode.BadRequest, response.status)
         assertEquals("Invalid file type for Nubank", response.bodyAsText())
     }
 

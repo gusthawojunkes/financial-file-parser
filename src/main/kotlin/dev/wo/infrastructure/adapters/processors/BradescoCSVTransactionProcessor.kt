@@ -6,11 +6,12 @@ import dev.wo.domain.enums.FinancialInstitution
 import dev.wo.domain.enums.TransactionType
 import dev.wo.domain.services.ProcessorConfiguration
 import dev.wo.domain.transactions.FinancialTransaction
-import dev.wo.infrastructure.helpers.FileDataHelper
+import dev.wo.infrastructure.helpers.TransactionFingerprintHelper
 import java.io.File
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 class BradescoCSVTransactionProcessor(
@@ -31,7 +32,7 @@ class BradescoCSVTransactionProcessor(
 
     override fun <T> createFinancialTransactions(data: T): MutableList<FinancialTransaction> {
         val transactions = mutableListOf<FinancialTransaction>()
-        val dateTimePattern = preferences?.dateTimePattern ?: "dd-MM-yyyy"
+        val dateTimePattern = preferences?.dateTimePattern ?: "dd/MM/yyyy"
         val delimiter = preferences?.csvSeparator ?: ';'
         val lines = data as ArrayList<String>
 
@@ -40,27 +41,36 @@ class BradescoCSVTransactionProcessor(
                 break
             }
             val properties = row.split(delimiter)
-            val transactionTime = properties[0] ?: continue
+            val transactionTime = properties[0]
 
-            val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+            val formatter = DateTimeFormatter.ofPattern(dateTimePattern)
             val localDate = LocalDate.parse(transactionTime, formatter)
-            val localDateTime = LocalDateTime.of(localDate, java.time.LocalTime.MIDNIGHT)
+            val localDateTime = LocalDateTime.of(localDate, LocalTime.MIDNIGHT)
             val description = properties[1]
-            if ("SALDO ANTERIOR".equals(description)) {
+            if ("SALDO ANTERIOR" == description) {
                 continue
             }
-            val institutionUUID = properties[2]
             val creditValue = getDoubleValueFromString(properties[3])
             val debitValue = getDoubleValueFromString(properties[4])
             val isDebit = (creditValue == 0.0 && debitValue != 0.0)
+            val transactionType = if (isDebit) TransactionType.DEBIT else TransactionType.CREDIT
+            val finalValue = if (isDebit) -debitValue else creditValue
+            val identifier = TransactionFingerprintHelper.generate(
+                institution = FinancialInstitution.BRADESCO,
+                transactionType = transactionType,
+                value = finalValue,
+                transactionTime = localDateTime,
+                description = description
+            )
             val transaction = FinancialTransaction(
-                if (isDebit) -debitValue else creditValue,
+                finalValue,
                 description,
                 localDateTime,
-                institutionUUID,
-                if (isDebit) TransactionType.DEBIT else TransactionType.CREDIT,
+                identifier,
+                transactionType,
                 FinancialInstitution.BRADESCO,
-                CardType.DEBIT
+                CardType.DEBIT,
+                institutionUUID = null
             )
 
             transactions.add(transaction)

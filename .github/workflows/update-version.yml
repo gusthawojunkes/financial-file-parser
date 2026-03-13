@@ -12,6 +12,7 @@ on:
 
 jobs:
   update-gradle-version:
+    name: "Update version"
     runs-on: ubuntu-latest
     permissions:
       contents: write
