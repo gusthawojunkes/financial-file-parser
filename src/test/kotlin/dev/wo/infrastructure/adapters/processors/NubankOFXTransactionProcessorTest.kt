@@ -61,6 +61,7 @@ class NubankOFXTransactionProcessorTest {
         every { stmtTrn.getFitId() } returns "uuid"
         every { stmtTrn.getTrnType() } returns "CREDIT"
         every { ofxFile.getCreditCardMsgsRsV1()?.getCcStmtTrnRs()?.getCcStmtRs()?.getBankTranList()?.getStmtTrnList() } returns listOf(stmtTrn)
+        every { ofxFile.getCreditCardMsgsRsV1()?.getCcStmtTrnRs()?.getCcStmtRs()?.getCcAcctFrom()?.getAcctId() } returns "5678"
 
         val transactions = processor.createFinancialTransactions(ofxFile)
 

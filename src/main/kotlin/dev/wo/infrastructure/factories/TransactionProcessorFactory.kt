@@ -2,8 +2,11 @@ package dev.wo.infrastructure.factories
 
 import dev.wo.domain.enums.FinancialInstitution
 import dev.wo.domain.enums.FinancialInstitution.*
+import dev.wo.domain.enums.InvoiceType
 import dev.wo.domain.exceptions.FileProcessingException
+import dev.wo.domain.services.ProcessorConfiguration
 import dev.wo.domain.services.TransactionProcessor
+import dev.wo.infrastructure.adapters.processors.BradescoCreditCardCSVTransactionProcessor
 import dev.wo.infrastructure.adapters.processors.BradescoCSVTransactionProcessor
 import dev.wo.infrastructure.adapters.processors.C6CSVTransactionProcessor
 import dev.wo.infrastructure.adapters.processors.C6OFXTransactionProcessor
@@ -13,16 +16,18 @@ import dev.wo.infrastructure.adapters.processors.NubankOFXTransactionProcessor
 import dev.wo.infrastructure.adapters.processors.WiseCSVTransactionProcessor
 
 object TransactionProcessorFactory {
-    fun getProcessor(institution: FinancialInstitution, fileType: String, block: TransactionProcessor.() -> Unit = {}): TransactionProcessor {
+    fun getProcessor(
+        institution: FinancialInstitution,
+        fileType: String,
+        preferences: ProcessorConfiguration? = null,
+        block: TransactionProcessor.() -> Unit = {}
+    ): TransactionProcessor {
         val processorFileType = fileType.lowercase()
 
         val processor = when (institution) {
             NUBANK -> when (processorFileType) {
                 "ofx" -> NubankOFXTransactionProcessor()
-                else -> throw FileProcessingException(
-                    "Invalid file type for Nubank",
-                    NUBANK, fileType
-                )
+                else -> throw FileProcessingException("Invalid file type for Nubank", NUBANK, fileType)
             }
 
             WISE -> when (processorFileType) {
@@ -37,7 +42,10 @@ object TransactionProcessorFactory {
             }
 
             BRADESCO -> when (processorFileType) {
-                "csv" -> BradescoCSVTransactionProcessor()
+                "csv" -> when (preferences?.invoiceType) {
+                    InvoiceType.CREDIT_INVOICE -> BradescoCreditCardCSVTransactionProcessor()
+                    else -> BradescoCSVTransactionProcessor()
+                }
                 else -> throw FileProcessingException("Invalid file type for Bradesco", BRADESCO, fileType)
             }
 
@@ -50,8 +58,6 @@ object TransactionProcessorFactory {
             else -> throw FileProcessingException("Invalid financial institution", UNKNOWN, fileType)
         }
 
-        processor.apply(block)
-
-        return processor
+        return processor.apply(block)
     }
 }

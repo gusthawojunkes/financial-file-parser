@@ -61,6 +61,8 @@ open class CommonOFXTransactionProcessor(
 
         val invoiceType = this.preferences?.invoiceType ?: InvoiceType.CREDIT_INVOICE
         val cardType = if (invoiceType == InvoiceType.CREDIT_INVOICE) CardType.CREDIT else CardType.DEBIT
+        val accountId = extractAccountId(data)
+        val cardLastFourDigits = extractCardLastFourDigits(data)
 
         for (ofxTransaction in transactionsFromFile) {
             val value = ofxTransaction.getTrnAmt()?.toDouble() ?: continue
@@ -84,13 +86,38 @@ open class CommonOFXTransactionProcessor(
                 transactionType,
                 institution = this.institution,
                 cardType,
-                institutionUUID = institutionUUID
+                institutionUUID = institutionUUID,
+                accountId = accountId,
+                cardLastFourDigits = cardLastFourDigits
             )
 
             financialTransactions.add(transaction)
         }
 
         return financialTransactions
+    }
+
+    fun <T> extractAccountId(data: T): String? {
+        return when (data) {
+            is OFXFileAccountStatement -> data.getBankMsgsRsV1()
+                ?.getStmtTrnRs()
+                ?.stmtRs
+                ?.bankAcctFrom
+                ?.acctId
+            else -> null
+        }
+    }
+
+    fun <T> extractCardLastFourDigits(data: T): String? {
+        return when (data) {
+            is OFXFileCreditInvoice -> data.getCreditCardMsgsRsV1()
+                ?.getCcStmtTrnRs()
+                ?.getCcStmtRs()
+                ?.getCcAcctFrom()
+                ?.getAcctId()
+                ?.takeLast(4)
+            else -> null
+        }
     }
 
     fun <T> getStatements(data: T): List<StmtTrn> {

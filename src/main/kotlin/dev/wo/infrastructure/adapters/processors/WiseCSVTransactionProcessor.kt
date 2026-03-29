@@ -32,6 +32,7 @@ class WiseCSVTransactionProcessor(
             val institution = FinancialInstitution.WISE
             val cardType = CardType.DEBIT // wise doesnt have credit cards
             val currency = row["Currency"] ?: continue
+            val cardLastFourDigits = row["Card Last Four Digits"]?.takeIf { it.isNotBlank() }
             val identifier = TransactionFingerprintHelper.generate(
                 institution = institution,
                 transactionType = transactionType,
@@ -50,7 +51,8 @@ class WiseCSVTransactionProcessor(
                 institution,
                 cardType,
                 currency,
-                institutionUUID = null
+                institutionUUID = null,
+                cardLastFourDigits = cardLastFourDigits
             )
 
             transactions.add(transaction)

@@ -19,7 +19,7 @@ class ProcessFileService {
     ): List<FinancialTransactionResponse> {
         FileService.validateFileType(fileType)
 
-        val processor = TransactionProcessorFactory.getProcessor(institution, fileType) {
+        val processor = TransactionProcessorFactory.getProcessor(institution, fileType, preferences) {
             this.file = file
             this.preferences = preferences
         }

@@ -15,8 +15,16 @@ data class FinancialTransaction(
     val institution: FinancialInstitution,
     val cardType: CardType? = null,
     val currency: String = "BRL",
-    val institutionUUID: String?
+    val institutionUUID: String?,
+    val accountId: String? = null,
+    val cardLastFourDigits: String? = null
 ) {
+    init {
+        require(cardLastFourDigits == null || cardLastFourDigits.length <= 4) {
+            "cardLastFourDigits must have at most 4 characters, but got: '$cardLastFourDigits'"
+        }
+    }
+
     fun getFormattedTransactionTime(): String {
         val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")
         return transactionTime.format(formatter)
