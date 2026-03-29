@@ -1,7 +1,10 @@
 package dev.wo.infrastructure.factories
 
 import dev.wo.domain.enums.FinancialInstitution
+import dev.wo.domain.enums.InvoiceType
 import dev.wo.domain.exceptions.FileProcessingException
+import dev.wo.domain.services.ProcessorConfiguration
+import dev.wo.infrastructure.adapters.processors.BradescoCreditCardCSVTransactionProcessor
 import dev.wo.infrastructure.adapters.processors.BradescoCSVTransactionProcessor
 import dev.wo.infrastructure.adapters.processors.C6CSVTransactionProcessor
 import dev.wo.infrastructure.adapters.processors.C6OFXTransactionProcessor
@@ -94,6 +97,20 @@ class TransactionProcessorFactoryTest {
     @Test
     fun `should return BradescoCSVTransactionProcessor when institution is Bradesco and file type is CSV`() {
         val processor = TransactionProcessorFactory.getProcessor(FinancialInstitution.BRADESCO, "CSV")
+        assertTrue(processor is BradescoCSVTransactionProcessor)
+    }
+
+    @Test
+    fun `should return BradescoCreditCardCSVTransactionProcessor when institution is Bradesco and invoice type is CREDIT_INVOICE`() {
+        val preferences = ProcessorConfiguration(invoiceType = InvoiceType.CREDIT_INVOICE)
+        val processor = TransactionProcessorFactory.getProcessor(FinancialInstitution.BRADESCO, "CSV", preferences)
+        assertTrue(processor is BradescoCreditCardCSVTransactionProcessor)
+    }
+
+    @Test
+    fun `should return BradescoCSVTransactionProcessor when institution is Bradesco and invoice type is ACCOUNT_STATEMENT`() {
+        val preferences = ProcessorConfiguration(invoiceType = InvoiceType.ACCOUNT_STATEMENT)
+        val processor = TransactionProcessorFactory.getProcessor(FinancialInstitution.BRADESCO, "CSV", preferences)
         assertTrue(processor is BradescoCSVTransactionProcessor)
     }
 
